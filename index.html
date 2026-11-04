@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f1e7">
+  <title>LOVE QUEST · Дело о пропавшем свидании</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='14' cy='13' r='9' fill='%23f6f1e7' stroke='%23596d5c' stroke-width='3'/%3E%3Cpath d='m21 20 8 9' stroke='%23596d5c' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#map-title" hidden>К карте расследования</a>
+  <section id="intro" class="intro" aria-labelledby="intro-title" hidden>
+    <div class="intro-paper">
+      <p class="eyebrow">LOVE QUEST <span>CHAPTER 04</span></p>
+      <div class="letter-art" aria-hidden="true">
+        <svg viewBox="0 0 280 190"><ellipse cx="140" cy="167" rx="107" ry="12" fill="#e8decb"/><g transform="rotate(-6 140 90)"><rect x="47" y="49" width="186" height="112" rx="10" fill="#d4b69c"/><path d="m48 58 92 67 92-67" fill="#e2cbb2"/><path d="m48 153 68-59M232 153l-68-59" fill="none" stroke="#bd987c" stroke-width="2"/><rect x="70" y="21" width="140" height="98" rx="4" fill="#fffcf3"/><path d="M91 48h97M91 60h75M91 73h90" stroke="#c6b9a2" stroke-width="3" stroke-linecap="round"/><path d="m48 60 92 66 92-66v91a10 10 0 0 1-10 10H58a10 10 0 0 1-10-10Z" fill="#e7ccb1"/><circle cx="140" cy="125" r="18" fill="#b66e65"/><path d="M132 124c-7-9 2-14 8-6 6-8 15-3 8 6l-8 8Z" fill="#f5d5bc"/></g><circle cx="224" cy="44" r="24" fill="none" stroke="#596d5c" stroke-width="7"/><path d="m241 61 22 24" stroke="#596d5c" stroke-width="10" stroke-linecap="round"/></svg>
+      </div>
+      <p class="case-number">Лично в руки Кате · Дело №04</p>
+      <h1 id="intro-title">Пропало<br><em>свидание.</em></h1>
+      <p class="intro-copy">Ни адреса, ни времени. Только конверт и городок, в котором каждая улочка что-то помнит.</p>
+      <p class="intro-copy">Катя, кажется, это дело для тебя. Найди шесть фрагментов послания — и узнай, куда ведут следы.</p>
+      <button id="begin" class="button primary" type="button">Начать расследование <span aria-hidden="true">↗</span></button>
+      <p class="quiet">Не спеши, ведь самое важное обычно прячется в мелочах.</p>
+    </div>
+  </section>
+
+  <div id="app" class="app" hidden>
+    <header class="topbar">
+      <a class="wordmark" href="#map-title" aria-label="LOVE QUEST — карта"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="15" cy="14" r="9"/><path d="m22 21 9 9M11 14h8M15 10v8"/></svg><span>LOVE QUEST<small>CHAPTER 04</small></span></a>
+      <button class="button subtle" type="button" data-panel="menu">О деле <span aria-hidden="true">☰</span></button>
+    </header>
+    <main id="main">
+      <section class="hero" aria-labelledby="map-title">
+        <div><p class="eyebrow">Личное расследование · 29 ноября 2026</p><h1 id="map-title" tabindex="-1">Дело о пропавшем<br><em>свидании</em></h1><p class="hero-copy">Шесть мест. Шесть маленьких секретов.<br>И одна история, которую предстоит собрать.</p></div>
+        <div class="progress-note"><span class="eyebrow">Найдено фрагментов</span><p class="progress-count"><strong id="progress-count">0</strong><span>/ 6</span></p><ol id="progress-markers" class="progress-markers" aria-label="Прогресс расследования"></ol><span id="progress-caption" class="quiet">Первый след уже ждёт.</span></div>
+      </section>
+
+      <div class="investigation">
+        <section class="map-section" aria-labelledby="town-title">
+          <div class="section-heading"><h2 id="town-title">Городок воспоминаний</h2><span class="map-coordinate" aria-hidden="true">N ↑</span></div>
+          <p class="map-instruction">Выбери место, чтобы заглянуть в его историю.</p>
+          <div class="town">
+            <svg class="town-landscape" viewBox="0 0 640 900" preserveAspectRatio="none" aria-hidden="true">
+              <defs><g id="town-crown"><ellipse cy="-21" rx="21" ry="28" fill="#a2b38b"/><ellipse cx="-7" cy="-29" rx="10" ry="16" fill="#b7c79b"/></g><g id="town-tree"><path d="M0-12V20" stroke="#a58d6d" stroke-width="5" stroke-linecap="round"/><use href="#town-crown"/></g><g id="town-flower"><path d="M0 4v10" stroke="#8d9f78" stroke-width="2"/><circle r="4" fill="#d4a190"/><circle r="1.4" fill="#faf1cc"/></g></defs>
+              <path d="M250 326c45-43 127-33 145 12-37 37-108 39-145-12ZM254 621c34-27 116-35 140 1-35 31-104 29-140-1Z" fill="#c5d4b2" opacity=".5"/>
+              <g opacity=".9"><use href="#town-tree" x="37" y="83"/><use href="#town-tree" x="595" y="68"/><g class="living-tree tree-one" transform="translate(309 80)"><path d="M0-12V20" stroke="#a58d6d" stroke-width="5" stroke-linecap="round"/><g class="tree-crown"><use href="#town-crown"/></g></g><use href="#town-tree" x="65" y="327"/><use href="#town-tree" x="583" y="339"/><g class="living-tree tree-two" transform="translate(315 394)"><path d="M0-12V20" stroke="#a58d6d" stroke-width="5" stroke-linecap="round"/><g class="tree-crown"><use href="#town-crown"/></g></g><use href="#town-tree" x="40" y="610"/><use href="#town-tree" x="595" y="629"/><g class="living-tree tree-three" transform="translate(307 684)"><path d="M0-12V20" stroke="#a58d6d" stroke-width="5" stroke-linecap="round"/><g class="tree-crown"><use href="#town-crown"/></g></g><use href="#town-tree" x="49" y="867"/><use href="#town-tree" x="591" y="865"/></g>
+              <g><use href="#town-flower" x="88" y="90"/><use href="#town-flower" x="100" y="100"/><use href="#town-flower" x="540" y="300"/><use href="#town-flower" x="553" y="307"/><use href="#town-flower" x="261" y="361"/><use href="#town-flower" x="380" y="650"/><use href="#town-flower" x="390" y="638"/><use href="#town-flower" x="83" y="839"/></g>
+              <g fill="none" stroke="#7f8d77" stroke-width="3" stroke-linecap="round"><path d="M330 294v34m-9-34h18m-18 0v-14h18v14M301 592v34m-9-34h18m-18 0v-14h18v14"/></g>
+            </svg>
+            <svg id="town-routes" class="town-routes" aria-hidden="true" focusable="false"></svg>
+            <div id="mission-map" class="mission-map"></div>
+            <div class="town-life" aria-hidden="true">
+              <svg class="resident resident-reader" data-npc="reader" viewBox="0 0 32 60" focusable="false"><ellipse cx="16" cy="56" rx="12" ry="3" fill="#8d9c7a" opacity=".2"/><path d="M12 42v12m8-12v12" stroke="#737f7d" stroke-width="4" stroke-linecap="round"/><path d="M7 29q9-7 18 0l2 16H5Z" fill="#bb9582"/><g class="npc-head"><circle cx="16" cy="19" r="8" fill="#e6caa5"/><path d="M8 19q-2-14 8-14 11 0 9 14" fill="#8e806b"/></g><g class="npc-book"><path d="M8 32q7-3 8 1 2-4 9-1v11q-7-4-9-1-2-3-8 0Z" fill="#f4e9cc"/><path d="M16 33v9" stroke="#b7ad8e"/></g></svg>
+              <svg class="resident resident-florist" data-npc="florist" viewBox="0 0 32 60" focusable="false"><ellipse cx="16" cy="56" rx="12" ry="3" fill="#8d9c7a" opacity=".2"/><path d="M12 44v10m8-10v10" stroke="#8c7e6c" stroke-width="4" stroke-linecap="round"/><path d="M8 29h16l4 17H4Z" fill="#91a488"/><circle cx="16" cy="20" r="8" fill="#e5c09e"/><path d="M5 16q10-13 22 0Z" fill="#b2a178"/><g class="npc-flowers"><path d="M10 43q5-10 11-13" fill="none" stroke="#6c886b" stroke-width="2"/><g fill="#c49885"><circle cx="21" cy="30" r="4"/><circle cx="25" cy="35" r="3"/><circle cx="17" cy="34" r="3"/></g></g></svg>
+              <svg class="resident resident-walker" data-npc="walker" viewBox="0 0 32 60" focusable="false"><ellipse cx="16" cy="56" rx="12" ry="3" fill="#8d9c7a" opacity=".2"/><g class="npc-walk-legs"><path d="m13 43-3 11m9-11 4 11" stroke="#7e827d" stroke-width="4" stroke-linecap="round"/></g><path d="M8 28h16l2 18H6Z" fill="#b9a57a"/><circle cx="16" cy="18" r="8" fill="#e5c4a3"/><path d="M7 15q0-13 10-11 10 2 9 13" fill="#828773"/><path d="m24 31 4 10" stroke="#e5c4a3" stroke-width="3" stroke-linecap="round"/><rect x="22" y="39" width="10" height="10" rx="2" fill="#ac8f72"/></svg>
+              <svg class="resident resident-photographer" data-npc="photographer" viewBox="0 0 32 60" focusable="false"><ellipse cx="16" cy="56" rx="12" ry="3" fill="#8d9c7a" opacity=".2"/><path d="M12 43v11m8-11v11" stroke="#858c93" stroke-width="4" stroke-linecap="round"/><path d="M8 28h16l3 18H5Z" fill="#a8a685"/><circle cx="16" cy="19" r="8" fill="#e8c6a2"/><path d="M8 17q-1-12 9-11 10 0 8 12" fill="#8e8070"/><g class="camera-hand"><path d="m9 31 1-10m13 10 1-10" stroke="#e8c6a2" stroke-width="4" stroke-linecap="round"/><rect x="7" y="16" width="19" height="12" rx="3" fill="#7d8982"/><circle cx="18" cy="22" r="4" fill="#c3d3cc" stroke="#5f736b" stroke-width="2"/></g></svg>
+              <svg class="bench-scene" viewBox="0 0 76 60" focusable="false"><ellipse cx="38" cy="55" rx="34" ry="4" fill="#8d9c7a" opacity=".15"/><path d="M8 32h60M8 39h60m-54 0v15m48-15v15" fill="none" stroke="#b29b7b" stroke-width="5" stroke-linecap="round"/><g data-npc="bench-left"><path d="m23 38-1 14m8-13 2 13" stroke="#838d86" stroke-width="4" stroke-linecap="round"/><path d="M17 26q9-6 17 0l1 13H16Z" fill="#a7b498"/><g class="npc-head"><circle cx="26" cy="17" r="8" fill="#e7c6a5"/><path d="M18 16q-1-12 9-11 9 1 7 12" fill="#9a8b74"/></g><path d="m32 28 7 5" stroke="#e7c6a5" stroke-width="3" stroke-linecap="round"/></g><g data-npc="bench-right"><path d="m48 38-2 14m9-14 1 14" stroke="#9296a0" stroke-width="4" stroke-linecap="round"/><path d="M42 26q9-6 17 0l2 13H41Z" fill="#c09a87"/><g class="npc-head"><circle cx="51" cy="17" r="8" fill="#e6bea0"/><path d="M43 17q-2-13 8-13 12 1 9 14l-4-7-12 7Z" fill="#8d7b65"/></g><path d="m43 28-5 5" stroke="#e6bea0" stroke-width="3" stroke-linecap="round"/></g></svg>
+              <svg class="bird bird-one" viewBox="0 0 32 18" focusable="false"><path class="bird-wing" d="M3 12q6-11 13 0 7-11 13 0" fill="none" stroke="#7c8c79" stroke-width="2" stroke-linecap="round"/></svg>
+              <svg class="bird bird-two" viewBox="0 0 32 18" focusable="false"><path class="bird-wing" d="M3 12q6-11 13 0 7-11 13 0" fill="none" stroke="#889783" stroke-width="2" stroke-linecap="round"/></svg>
+              <svg class="mikaella" viewBox="0 0 76 70" focusable="false"><ellipse cx="36" cy="64" rx="28" ry="4" fill="#7f8d761c"/><path d="M52 56q26 3 17-13" fill="none" stroke="#a5a8a2" stroke-width="9" stroke-linecap="round"/><ellipse cx="36" cy="45" rx="20" ry="20" fill="#b9bdb6"/><ellipse cx="33" cy="48" rx="12" ry="15" fill="#dce0d5"/><path d="M18 26 17 12q10-3 16 6m12 0q8-7 15-3l-2 16" fill="#a4aaa2"/><path d="m18 16 9 6-8 5m35-9-8 6 9 4" fill="#cfcec0"/><ellipse cx="37" cy="31" rx="23" ry="20" fill="#d6d9d0"/><path d="m29 13 4 9m5-11v10m6-8-2 10" stroke="#b2b8af" stroke-width="3" stroke-linecap="round"/><ellipse cx="27" cy="32" rx="6" ry="5" fill="#b2bc77"/><ellipse cx="47" cy="32" rx="6" ry="5" fill="#b2bc77"/><path d="M21 28 32 30m10 0 11-2" stroke="#a4aaa2" stroke-width="3"/><ellipse cx="28" cy="32" rx="1.5" ry="4" fill="#4c5950"/><ellipse cx="46" cy="32" rx="1.5" ry="4" fill="#4c5950"/><ellipse cx="31" cy="41" rx="8" ry="5" fill="#edf0e5"/><ellipse cx="43" cy="41" rx="8" ry="5" fill="#edf0e5"/><path d="m33 38 4 4 4-4Z" fill="#a18e83"/><path d="M37 42v3m-17-5-11-2m11 6L8 45m46-5 11-2m-11 6 12 1" fill="none" stroke="#a1a69b" stroke-width="1"/><path d="M25 60h9m7 0h9" stroke="#d8ddd3" stroke-width="6" stroke-linecap="round"/></svg>
+              <span class="falling-leaf leaf-one"></span><span class="falling-leaf leaf-two"></span><span class="falling-leaf leaf-three"></span>
+            </div>
+            <div id="town-katya" class="katya" data-state="standing" aria-hidden="true" hidden>
+              <svg class="katya-sprite" viewBox="0 0 40 80" focusable="false">
+                <defs><linearGradient id="katya-hair" x2="1" y2="1"><stop stop-color="#837259"/><stop offset=".5" stop-color="#ad9673"/><stop offset="1" stop-color="#c6ae86"/></linearGradient></defs>
+                <ellipse cx="20" cy="76" rx="12" ry="2.5" fill="#5f72512b"/>
+                <path d="M7 22Q5 3 20 3q15 0 14 21l2 30H5Z" fill="url(#katya-hair)"/>
+                <g class="katya-leg leg-left"><path d="m14 55-1 17" stroke="#809bae" stroke-width="7" stroke-linecap="round"/><path d="M10 73h7" stroke="#eee4d3" stroke-width="4" stroke-linecap="round"/></g>
+                <g class="katya-leg leg-right"><path d="m25 55 1 17" stroke="#91a9b8" stroke-width="7" stroke-linecap="round"/><path d="M23 73h7" stroke="#eee4d3" stroke-width="4" stroke-linecap="round"/></g>
+                <path d="M10 33q10-8 20 0l3 24q-13 6-26 0Z" fill="#85695a"/><path d="M12 32q8 14 16 0" fill="none" stroke="#a58975" stroke-width="4"/><path d="M15 42v7m10-7v7M13 52q7 4 14 0" fill="none" stroke="#b49b85" stroke-width="1"/>
+                <g class="katya-arm arm-left"><path d="m9 37-4 17" fill="none" stroke="#927362" stroke-width="6" stroke-linecap="round"/><circle cx="5" cy="56" r="3" fill="#edc7a1"/></g>
+                <g class="katya-arm arm-right"><path d="m31 37 4 12" fill="none" stroke="#927362" stroke-width="6" stroke-linecap="round"/><circle cx="35" cy="51" r="3" fill="#edc7a1"/><path d="m35 48-2-5" stroke="#61745d" stroke-width="2"/><circle cx="31" cy="39" r="5" fill="#dce6d1" stroke="#61745d" stroke-width="2"/></g>
+                <ellipse cx="20" cy="21" rx="10" ry="12" fill="#edc7a1"/><path d="M9 22Q6 3 20 3q15 0 12 21l-5-12-6-4-10 13Z" fill="url(#katya-hair)"/><path d="M13 11q-6 13-2 34m17-33q6 12 1 33" stroke="#d1b992" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M15 22h.1m10 0h.1" stroke="#635746" stroke-width="2" stroke-linecap="round"/><path d="M16 28q4 4 8 0" fill="#fff8e6" stroke="#bc8d76" stroke-width=".7"/>
+              </svg><span class="katya-label">Ты здесь</span>
+            </div>
+            <div id="find-notice" class="find-notice" role="status" hidden></div>
+          </div>
+          <div class="map-legend"><span><i class="legend-dot current"></i>Твой следующий шаг</span><span><i class="legend-dot completed"></i>Дело раскрыто</span><span><i class="legend-dot locked"></i>Пока закрыто</span></div>
+        </section>
+        <aside class="case-sidebar" aria-label="Заметки расследования">
+          <div class="case-note"><span class="paper-clip" aria-hidden="true"></span><p class="eyebrow">На полях дела</p><h2 id="case-note-title"></h2><p id="next-step"></p><button id="current-case" class="text-button" type="button">Открыть текущее дело <span aria-hidden="true">→</span></button><div class="note-stamp" aria-hidden="true">ОСОБО<br>ЛИЧНОЕ</div></div>
+          <button class="journal-launch" type="button" data-panel="journal"><span class="journal-icon" aria-hidden="true">▤</span><span><strong>Журнал дела</strong><small>Здесь складываются находки</small></span><span aria-hidden="true">↗</span></button>
+          <p id="save-note" class="save-note">Твои находки сохраняются в этом браузере.</p>
+        </aside>
+      </div>
+      <div id="dev-tools" class="dev-tools" hidden></div>
+      <footer class="page-footer"><span>Детективное расследование для любимой Кати</span><span>LOVE QUEST · 04</span></footer>
+    </main>
+    <nav class="bottom-nav" aria-label="Основная навигация"><button id="nav-map" type="button" aria-current="page"><span aria-hidden="true">⌂</span>Карта</button><button type="button" data-panel="journal"><span aria-hidden="true">▤</span>Журнал</button><button type="button" data-panel="help"><span aria-hidden="true">?</span>Подсказка</button></nav>
+  </div>
+
+  <dialog id="panel" aria-labelledby="panel-title"><div class="panel-header"><p id="panel-kicker" class="eyebrow"></p><button id="close-panel" class="close-button" type="button" aria-label="Закрыть окно">×</button></div><div class="panel-content"><h2 id="panel-title"></h2><div id="panel-body"></div></div></dialog>
+  <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+  <noscript><p class="no-script">Для расследования нужен JavaScript. Включи его в настройках браузера и открой страницу снова.</p></noscript>
+</body>
+</html>
