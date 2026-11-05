@@ -2,14 +2,13 @@
 (() => {
   const STORAGE_KEY = 'lovequest.chapter04.shell.v1';
   const SCHEMA_VERSION = 1;
-  const IS_DEV =
-  location.protocol === 'file:' ||
-  ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) ||
-  (
-    location.hostname === 'marklazarev9945-cpu.github.io' &&
-    location.pathname.startsWith('/love-quest-test/')
-  );
-  const DEV_ENABLED = IS_DEV && new URLSearchParams(location.search).get('dev') === '1';
+  function devModeAllowed(url) {
+    const local = url.protocol === 'file:' || ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+    const testPages = url.protocol === 'https:' && url.hostname === 'marklazarev9945-cpu.github.io' &&
+      (url.pathname === '/love-quest-test' || url.pathname.startsWith('/love-quest-test/'));
+    return (local || testPages) && new URLSearchParams(url.search).get('dev') === '1';
+  }
+  const DEV_ENABLED = devModeAllowed(location);
   const MISSIONS = Object.freeze([
     {id:'001',locationName:'Дом воспоминаний',title:'Дело о потерянных письмах',clueFragment:'ТЫ',type:'pending',entryPoint:null,column:1,row:1,description:'В доме пахнет чаем, а на подоконнике лежит стопка писем. Одно из них помнит больше, чем кажется. Внимательно присмотрись к знакомым мелочам.'},
     {id:'002',locationName:'Фотостудия',title:'Восстановить утраченное',clueFragment:'НАШЛА',type:'pending',entryPoint:null,column:2,row:1,description:'Свет из большого окна ложится на стол фотографа. Здесь история рассыпалась на кусочки, но каждый из них всё ещё хранит частицу одного важного дня.'},
@@ -20,7 +19,7 @@
   ].map(Object.freeze));
   const CASE_NOTES = [
     ['Некоторые письма находят дорогу домой.','Всё начинается там, где однажды потерялись важные слова. Загляни в дом и попробуй восстановить их историю.'],
-    ['У каждого снимка есть своя тайна.','Одна фотография оказалась разбита на части. Но некоторые моменты невозможно забыть, даже если картинка рассыпалась.'],
+    ['У каждого снимка есть своя тайна.','В Фотостудии тебя ждёт головоломка из двенадцати фрагментов. Собери их и вспомни один особенный день.'],
     ['Пять вещей. Пять историй.','Кто-то собрал здесь предметы, которые для постороннего ничего не значат. Но только не для тебя.'],
     ['Между строк скрывается больше, чем кажется.','Восемь ответов, знакомые слова и одна история, которую не найти ни в одной обычной книге.'],
     ['Каждая дорога куда-то нас привела.','Самые важные воспоминания не всегда хранятся по порядку. Пора расставить их по местам.'],
@@ -72,7 +71,7 @@
   const statusOf = mission => state.completedMissionIds.includes(mission.id) ? 'completed' :
     nextMission()?.id === mission.id ? 'current' : 'locked';
 
-  // Shared by the letter archive action and the local developer tools.
+  // Shared by mission archive actions and the developer tools.
   function completeMission(missionId) {
     if (nextMission()?.id !== missionId) return false;
     state.completedMissionIds.push(missionId);
@@ -285,48 +284,72 @@
     button.addEventListener('click',callback);
     return button;
   }
-  const letters = createLettersMission({
+  const missionUI = {
     panel, body: panelBody, title: panelTitle, kicker: $('#panel-kicker'),
-    closeButton: $('#close-panel'), element, button: panelButton,
+    closeButton: $('#close-panel'), element, button: panelButton
+  };
+  function archiveMission(missionId) {
+    if (!completeMission(missionId)) return false;
+    returnFocus = $('#mission-map [aria-current="step"]');
+    panel.close();
+    $('.town').scrollIntoView({block:'start',behavior:'auto'});
+    return true;
+  }
+  const letters = createLettersMission({
+    ...missionUI,
     isCompleted: () => state.completedMissionIds.includes('001'),
-    archive: () => {
-      if (!completeMission('001')) return false;
-      returnFocus = $('#mission-map [aria-current="step"]');
-      panel.close();
-      $('.town').scrollIntoView({block:'start',behavior:'auto'});
-      return true;
-    }
+    archive: () => archiveMission('001')
+  });
+  const photo = createPhotoMission({
+    ...missionUI,
+    isCompleted: () => state.completedMissionIds.includes('002'),
+    archive: () => archiveMission('002')
   });
   function openPanel(kind,missionId) {
     letters.clearView();
+    photo.clearView();
     panelBody.replaceChildren();
     $('#panel-kicker').textContent = 'LOVE QUEST · Дело №04';
     if (kind === 'letters') {
       if (statusOf(MISSIONS[0]) === 'locked') return;
       letters.open();
+    } else if (kind === 'photo') {
+      if (statusOf(MISSIONS[1]) === 'locked') return;
+      photo.open();
     } else if (kind === 'case') {
       const mission = MISSIONS.find(item => item.id === missionId);
       if (!mission) return;
       const status = statusOf(mission);
       $('#panel-kicker').textContent = 'Карточка дела · ' + mission.id;
       panelTitle.textContent = mission.locationName;
+      if (mission.id === '002' && status !== 'locked') {
+        $('#panel-kicker').textContent = 'Фотостудия · Дело 002';
+        panelTitle.textContent = mission.title;
+      }
       const art = element('div',undefined,'case-art');
       art.innerHTML = buildingArt(mission.id);
-      panelBody.append(art,element('span',status === 'completed' ? 'Дело раскрыто' : status === 'locked' ? 'Пока закрыто' : 'Текущее дело','panel-state'),element('h3',mission.title));
+      panelBody.append(art,element('span',status === 'completed' ? 'Дело раскрыто' : status === 'locked' ? 'Пока закрыто' : 'Текущее дело','panel-state'));
+      if (panelTitle.textContent !== mission.title) panelBody.append(element('h3',mission.title));
       if (status === 'locked') {
         const previous = MISSIONS[Number(mission.id)-2];
         panelBody.append(element('p','Эта дверь откроется после дела ' + previous.id + ' — «' + previous.locationName + '». Сначала найди предыдущий фрагмент: у этой истории свой порядок.'));
       } else {
-        panelBody.append(element('p',mission.description));
+        if (mission.id === '002' && status === 'current') {
+          panelBody.append(element('p','Один важный снимок рассыпался на двенадцать частей. Собери его — и воспоминание снова станет целым'));
+        } else if (mission.id !== '002') {
+          panelBody.append(element('p',mission.description));
+        }
         if (status === 'completed') {
           const fragment=element('div',undefined,'fragment-display');
           fragment.append(element('p','Найденный фрагмент','fragment-label'),element('span',mission.clueFragment,'clue-word clue-token'));
           panelBody.append(fragment);
-        } else if (mission.id !== '001') {
+        } else if (mission.id !== '001' && mission.id !== '002') {
           panelBody.append(element('div',mission.type === 'runner' ? 'Дело готовится. Парк ещё не принимает участников этого расследования. Его история появится здесь чуть позже.' : 'Дело готовится. Мы бережно собираем эту историю. Пока можно осмотреть городок и заглянуть в журнал.','pending-note'));
         }
         if (mission.id === '001') {
           panelBody.append(panelButton(status === 'completed' ? 'Открыть письмо' : 'Войти в Дом воспоминаний',() => openPanel('letters'),true));
+        } else if (mission.id === '002') {
+          panelBody.append(panelButton(status === 'completed' ? 'Открыть снимок из архива' : 'Восстановить фотографию',() => openPanel('photo'),true));
         }
       }
       panelBody.append(panelButton('Вернуться на карту',() => panel.close()));
@@ -365,13 +388,13 @@
       panel.showModal();
     }
     panel.scrollTop = 0;
-    if (kind === 'letters') panelTitle.focus({preventScroll:true});
+    if (kind === 'letters' || kind === 'photo') panelTitle.focus({preventScroll:true});
     else $('#close-panel').focus({preventScroll:true});
   }
   function renderDevTools() {
     const tools = $('#dev-tools');
     tools.hidden = false;
-    tools.replaceChildren(element('p','Локальный dev mode · тестовый прогресс сохраняется'));
+    tools.replaceChildren(element('p','Dev mode · тестовый прогресс сохраняется'));
     const actions = element('div',undefined,'dev-actions');
     const complete = panelButton('Завершить текущее дело',() => {
       if (!DEV_ENABLED) return;
@@ -381,7 +404,9 @@
     complete.disabled = !nextMission();
     const undo = panelButton('Откатить последнее',() => {
       if (!DEV_ENABLED || !state.completedMissionIds.length) return;
-      if (state.completedMissionIds.pop() === '001') letters.reset();
+      const undone = state.completedMissionIds.pop();
+      if (undone === '001') letters.reset();
+      if (undone === '002') photo.reset();
       if (panel.open) panel.close();
       saveState(); render(); announce('Последнее завершение отменено.');
     });
@@ -390,6 +415,7 @@
       if (!DEV_ENABLED || !window.confirm('Сбросить все находки и начать расследование заново в этом браузере?')) return;
       state = freshState(); storageReset = false;
       letters.reset();
+      photo.reset();
       saveState(); render(); showIntro(); announce('Прогресс сброшен.');
     }),panelButton('Показать вступление',showIntro));
     tools.append(actions,element('p','Для обычного режима убери ?dev=1 из адреса. Тестовые находки останутся; перед передачей игроку сбрось прогресс.','dev-warning'));
@@ -412,15 +438,16 @@
     $('#map-title').scrollIntoView({block:'start',behavior:'auto'});
   });
   function dismissPanel() {
-    if (!letters.closeZoom()) panel.close();
+    if (!letters.closeZoom() && !photo.closePreview()) panel.close();
   }
   $('#close-panel').addEventListener('click',dismissPanel);
   panel.addEventListener('click',event => { if (event.target === panel) dismissPanel(); });
   panel.addEventListener('cancel',event => {
-    if (letters.closeZoom()) event.preventDefault();
+    if (letters.closeZoom() || photo.closePreview()) event.preventDefault();
   });
   panel.addEventListener('close',() => {
     letters.clearView();
+    photo.clearView();
     panelBody.replaceChildren();
     panelTitle.textContent = '';
     if (!app.hidden) {

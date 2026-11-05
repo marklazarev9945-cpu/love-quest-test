@@ -1,0 +1,125 @@
+#panel.photo-panel {
+  width: min(680px, calc(100% - 24px));
+}
+
+.photo-panel .panel-content p {
+  margin-bottom: 10px;
+}
+
+.studio-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  width: min(100%, 320px);
+  margin: 0 auto 14px;
+  background: #e9e4d6;
+  outline: 1px solid #c6ccb7;
+}
+
+.studio-tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: url('../../assets/mission-002/proposal.jpg') no-repeat;
+  background-size: 300% 400%;
+  box-shadow: inset 0 0 0 1px #fff8e966;
+}
+
+.studio-tile[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 4px #ffe6a1, inset 0 0 0 6px #536e59;
+}
+
+.studio-tile:focus-visible {
+  outline-offset: -5px;
+  z-index: 1;
+}
+
+.studio-count {
+  color: var(--green);
+  font-weight: 650;
+}
+
+.studio-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.photo-panel .button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.studio-note {
+  background: #eeeee2;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+
+.studio-note summary {
+  min-height: 44px;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.studio-note .button {
+  margin: 4px 8px 4px 0;
+}
+
+.studio-figure {
+  margin: 0 0 14px;
+}
+
+.studio-photo {
+  display: block;
+  width: min(100%, 320px);
+  height: auto;
+  margin-inline: auto;
+  border-radius: 8px;
+}
+
+.studio-figure figcaption {
+  margin-top: 12px;
+  color: var(--green);
+  font-family: var(--serif);
+  line-height: 1.5;
+}
+
+.studio-found .studio-photo {
+  animation: studio-unveil 420ms ease-out both;
+}
+
+@keyframes studio-unveil {
+  from { opacity: .66; }
+  to { opacity: 1; }
+}
+
+.studio-viewport {
+  max-height: min(60dvh, 680px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin: 10px 0;
+}
+
+.studio-viewport .studio-photo {
+  width: auto;
+  max-width: 100%;
+  max-height: min(60dvh, 680px);
+  object-fit: contain;
+}
+
+.studio-viewport.is-expanded .studio-photo {
+  width: 1046px;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-found .studio-photo { animation: none; }
+}
