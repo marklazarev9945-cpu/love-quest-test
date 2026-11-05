@@ -2,8 +2,13 @@
 (() => {
   const STORAGE_KEY = 'lovequest.chapter04.shell.v1';
   const SCHEMA_VERSION = 1;
-  const IS_DEV = ['file:'].includes(location.protocol) ||
-    ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+  const IS_DEV =
+  location.protocol === 'file:' ||
+  ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) ||
+  (
+    location.hostname === 'marklazarev9945-cpu.github.io' &&
+    location.pathname.startsWith('/love-quest-test/')
+  );
   const DEV_ENABLED = IS_DEV && new URLSearchParams(location.search).get('dev') === '1';
   const MISSIONS = Object.freeze([
     {id:'001',locationName:'Дом воспоминаний',title:'Дело о потерянных письмах',clueFragment:'ТЫ',type:'pending',entryPoint:null,column:1,row:1,description:'В доме пахнет чаем, а на подоконнике лежит стопка писем. Одно из них помнит больше, чем кажется. Внимательно присмотрись к знакомым мелочам.'},
