@@ -1,0 +1,88 @@
+#panel.letters-panel {
+  width: min(730px, calc(100% - 24px));
+}
+
+.letters-panel .button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+  margin: 4px 8px 4px 0;
+}
+
+.letters-panel .letter-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #ddd4bc;
+  border-radius: 8px;
+  background: #f2ede0;
+}
+
+.letter-actions, .letter-options {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.letters-panel .letter-options .button {
+  justify-content: flex-start;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.letters-panel .letter-feedback {
+  color: #7b4b3e;
+  margin-bottom: 12px;
+}
+
+.letter-feedback:empty {
+  margin: 0;
+}
+
+.letter-reply, .letter-hint {
+  background: #eeeee2;
+  border-radius: 12px;
+  padding: 0 14px;
+  margin: 12px 0;
+}
+
+.letters-panel .letter-reply {
+  padding: 12px 14px;
+}
+
+.letter-hint summary {
+  min-height: 44px;
+  padding: 11px 0;
+  cursor: pointer;
+}
+
+.letter-hint p {
+  padding-bottom: 12px;
+}
+
+.letter-figure {
+  margin: 0;
+}
+
+.letter-figure figcaption {
+  margin-top: 12px;
+  color: var(--green);
+  line-height: 1.5;
+  font-family: var(--serif);
+}
+
+#panel.letters-zoom {
+  width: min(1100px, calc(100% - 24px));
+}
+
+.letter-viewport {
+  max-height: min(60dvh, 720px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin: 12px 0;
+}
+
+.letter-viewport.is-expanded .letter-photo {
+  width: 1183px;
+  max-width: none;
+}

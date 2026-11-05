@@ -2,13 +2,8 @@
 (() => {
   const STORAGE_KEY = 'lovequest.chapter04.shell.v1';
   const SCHEMA_VERSION = 1;
-  const IS_DEV =
-  location.protocol === 'file:' ||
-  ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) ||
-  (
-    location.hostname === 'marklazarev9945-cpu.github.io' &&
-    location.pathname.startsWith('/love-quest-test/')
-  );
+  const IS_DEV = ['file:'].includes(location.protocol) ||
+    ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   const DEV_ENABLED = IS_DEV && new URLSearchParams(location.search).get('dev') === '1';
   const MISSIONS = Object.freeze([
     {id:'001',locationName:'Дом воспоминаний',title:'Дело о потерянных письмах',clueFragment:'ТЫ',type:'pending',entryPoint:null,column:1,row:1,description:'В доме пахнет чаем, а на подоконнике лежит стопка писем. Одно из них помнит больше, чем кажется. Внимательно присмотрись к знакомым мелочам.'},
@@ -72,8 +67,7 @@
   const statusOf = mission => state.completedMissionIds.includes(mission.id) ? 'completed' :
     nextMission()?.id === mission.id ? 'current' : 'locked';
 
-  // Internal future integration point. No window API, messages or active entry links.
-  // In this shell the only caller is the explicitly gated local developer action.
+  // Shared by the letter archive action and the local developer tools.
   function completeMission(missionId) {
     if (nextMission()?.id !== missionId) return false;
     state.completedMissionIds.push(missionId);
@@ -286,10 +280,26 @@
     button.addEventListener('click',callback);
     return button;
   }
+  const letters = createLettersMission({
+    panel, body: panelBody, title: panelTitle, kicker: $('#panel-kicker'),
+    closeButton: $('#close-panel'), element, button: panelButton,
+    isCompleted: () => state.completedMissionIds.includes('001'),
+    archive: () => {
+      if (!completeMission('001')) return false;
+      returnFocus = $('#mission-map [aria-current="step"]');
+      panel.close();
+      $('.town').scrollIntoView({block:'start',behavior:'auto'});
+      return true;
+    }
+  });
   function openPanel(kind,missionId) {
+    letters.clearView();
     panelBody.replaceChildren();
     $('#panel-kicker').textContent = 'LOVE QUEST · Дело №04';
-    if (kind === 'case') {
+    if (kind === 'letters') {
+      if (statusOf(MISSIONS[0]) === 'locked') return;
+      letters.open();
+    } else if (kind === 'case') {
       const mission = MISSIONS.find(item => item.id === missionId);
       if (!mission) return;
       const status = statusOf(mission);
@@ -307,8 +317,11 @@
           const fragment=element('div',undefined,'fragment-display');
           fragment.append(element('p','Найденный фрагмент','fragment-label'),element('span',mission.clueFragment,'clue-word clue-token'));
           panelBody.append(fragment);
-        } else {
+        } else if (mission.id !== '001') {
           panelBody.append(element('div',mission.type === 'runner' ? 'Дело готовится. Парк ещё не принимает участников этого расследования. Его история появится здесь чуть позже.' : 'Дело готовится. Мы бережно собираем эту историю. Пока можно осмотреть городок и заглянуть в журнал.','pending-note'));
+        }
+        if (mission.id === '001') {
+          panelBody.append(panelButton(status === 'completed' ? 'Открыть письмо' : 'Войти в Дом воспоминаний',() => openPanel('letters'),true));
         }
       }
       panelBody.append(panelButton('Вернуться на карту',() => panel.close()));
@@ -334,7 +347,7 @@
       panelBody.append(element('div','6 / 6','final-seal'),element('p','Все слова сошлись. Это расследование привело к новой истории — и у неё будет своё продолжение.'),element('div','Продолжение готовится. Финальная глава появится здесь позже. Твои находки сохранены.','pending-note'),panelButton('Вернуться в городок',() => panel.close(),true));
     } else if (kind === 'help') {
       panelTitle.textContent = 'Маленькая подсказка';
-      panelBody.append(element('p','Иди за Катей на карте: она стоит у текущего дела. Нажми на здание, чтобы прочитать его карточку. Следующая дверь откроется после предыдущей находки.'),element('p','Слова послания хранятся в журнале. Заглядывай туда, когда захочется собрать мысли вместе.'),element('div','Сейчас дела ещё готовятся. Ты можешь изучить городок, но получить фрагмент за открытие карточки нельзя.','pending-note'));
+      panelBody.append(element('p','Иди за Катей на карте: она стоит у текущего дела. Нажми на здание, чтобы прочитать его карточку. Следующая дверь откроется после предыдущей находки.'),element('p','Слова послания хранятся в журнале. Заглядывай туда, когда захочется собрать мысли вместе.'),element('div','Первое дело ждёт в Доме воспоминаний. Открой его карточку и войди в дом, чтобы начать расследование.','pending-note'));
     } else {
       panelTitle.textContent = 'Дело особой важности';
       panelBody.append(element('p','Катя, в этом городке знакомые места умеют хранить секреты. Здесь не нужно торопиться: замечай детали, собирай слова и доверяй своим воспоминаниям.'));
@@ -347,7 +360,8 @@
       panel.showModal();
     }
     panel.scrollTop = 0;
-    $('#close-panel').focus({preventScroll:true});
+    if (kind === 'letters') panelTitle.focus({preventScroll:true});
+    else $('#close-panel').focus({preventScroll:true});
   }
   function renderDevTools() {
     const tools = $('#dev-tools');
@@ -362,7 +376,7 @@
     complete.disabled = !nextMission();
     const undo = panelButton('Откатить последнее',() => {
       if (!DEV_ENABLED || !state.completedMissionIds.length) return;
-      state.completedMissionIds.pop();
+      if (state.completedMissionIds.pop() === '001') letters.reset();
       if (panel.open) panel.close();
       saveState(); render(); announce('Последнее завершение отменено.');
     });
@@ -370,6 +384,7 @@
     actions.append(complete,undo,panelButton('Сбросить весь прогресс',() => {
       if (!DEV_ENABLED || !window.confirm('Сбросить все находки и начать расследование заново в этом браузере?')) return;
       state = freshState(); storageReset = false;
+      letters.reset();
       saveState(); render(); showIntro(); announce('Прогресс сброшен.');
     }),panelButton('Показать вступление',showIntro));
     tools.append(actions,element('p','Для обычного режима убери ?dev=1 из адреса. Тестовые находки останутся; перед передачей игроку сбрось прогресс.','dev-warning'));
@@ -391,9 +406,16 @@
     showMap();
     $('#map-title').scrollIntoView({block:'start',behavior:'auto'});
   });
-  $('#close-panel').addEventListener('click',() => panel.close());
-  panel.addEventListener('click',event => { if (event.target === panel) panel.close(); });
+  function dismissPanel() {
+    if (!letters.closeZoom()) panel.close();
+  }
+  $('#close-panel').addEventListener('click',dismissPanel);
+  panel.addEventListener('click',event => { if (event.target === panel) dismissPanel(); });
+  panel.addEventListener('cancel',event => {
+    if (letters.closeZoom()) event.preventDefault();
+  });
   panel.addEventListener('close',() => {
+    letters.clearView();
     panelBody.replaceChildren();
     panelTitle.textContent = '';
     if (!app.hidden) {
