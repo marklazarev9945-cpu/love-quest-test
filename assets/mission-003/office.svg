@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="420" viewBox="0 0 440 420">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#f5ebd7"/><stop offset="1" stop-color="#e4cdae"/>
+    </linearGradient>
+    <linearGradient id="floor" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#c5a489"/><stop offset="1" stop-color="#e2c4a4"/>
+    </linearGradient>
+    <linearGradient id="sky" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#b5d1cf"/><stop offset="1" stop-color="#f6e9ba"/>
+    </linearGradient>
+    <pattern id="paper" width="28" height="32" patternUnits="userSpaceOnUse">
+      <path d="M14 4v4m-2-2h4M0 21v3" stroke="#9c8968" opacity=".19" stroke-linecap="round"/>
+    </pattern>
+  </defs>
+  <path fill="url(#wall)" d="M0 0h440v289H0z"/>
+  <path fill="url(#paper)" d="M0 0h440v289H0z"/>
+  <path fill="#c6c5a8" d="M0 184h440v105H0z"/>
+  <path d="M0 190h440M0 274h440M26 190v83m46-83v83m46-83v83m46-83v83m46-83v83m46-83v83m46-83v83m46-83v83m46-83v83" stroke="#a3a888" stroke-width="2" opacity=".55"/>
+  <path fill="#a58c71" d="M0 278h440v11H0z"/>
+  <path fill="url(#floor)" d="M0 289h440v131H0z"/>
+  <path d="M0 314h440M0 351h440M0 396h440M103 289 12 420m151-131-45 131m102-131v131m57-131 45 131m16-131 91 131" fill="none" stroke="#9b775e" opacity=".27"/>
+  <path d="M35 289 168 182h64l-30 107-22 122H0V342z" fill="#fff1b6" opacity=".20"/>
+  <!-- Arched window and the quiet town beyond it -->
+  <path d="M35 166V79a56 56 0 0 1 112 0v87Z" fill="#9e8267" opacity=".27" transform="translate(4 4)"/>
+  <path d="M35 166V79a56 56 0 0 1 112 0v87Z" fill="url(#sky)" stroke="#9a8269" stroke-width="6"/>
+  <circle cx="105" cy="77" r="15" fill="#fff1bd"/>
+  <path d="M38 129q28-33 55-7t51-8v48H38z" fill="#a9b694"/>
+  <path d="M38 145q38-23 63-9t43-4v30H38z" fill="#8fa586"/>
+  <path d="M61 144v-13l11-8 11 8v13m24 4v-11l10-7 10 7v11" fill="#f1dfba"/>
+  <path d="M91 25v141M38 103h106" stroke="#b49b7d" stroke-width="5"/>
+  <path d="M30 167h124" stroke="#a7896a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M36 59q-9 61 8 100H14Q29 109 17 52m127 6q9 62-8 101h29q-13-50-4-106" fill="#d7ae94" opacity=".8"/>
+  <!-- Noticeboard -->
+  <rect x="173" y="53" width="112" height="106" rx="5" fill="#9a785e" opacity=".19"/>
+  <rect x="169" y="48" width="112" height="106" rx="5" fill="#bf9b7e" stroke="#96765d" stroke-width="3"/>
+  <path d="m180 65 35-3 3 43-34 3zM229 74l37 6-5 38-38-5zM199 115l26-3 3 27-26 4z" fill="#f6e8ce"/>
+  <path d="m190 77 16-1m-15 7 14-1m-13 7 11-1m46 1 8 5-10 9-9-9zm-43 34 12-2m-11 7 13-2" fill="none" stroke="#aa957e" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="m196 66 48 15-30 35" fill="none" stroke="#a96858" opacity=".65"/>
+  <circle cx="196" cy="66" r="3" fill="#a96858"/><circle cx="244" cy="81" r="3" fill="#a96858"/><circle cx="214" cy="116" r="3" fill="#a96858"/>
+  <!-- Built-in bookcase -->
+  <rect x="300" y="40" width="122" height="193" rx="7" fill="#98765e" opacity=".24"/>
+  <rect x="294" y="33" width="122" height="193" rx="6" fill="#aa896d" stroke="#866c55" stroke-width="2"/>
+  <path d="M304 49h102v158H304z" fill="#94765d"/>
+  <path d="M304 99h102m-102 47h102m-102 48h102" stroke="#c6a386" stroke-width="8"/>
+  <path d="M308 92V65h9v27m4 0V57h11v35m4 0V68h10v24m4 0 3-31 10 1-3 30" fill="#c5c8a5" stroke="#766953" stroke-width="1.5"/>
+  <path d="M379 92q-9-14 5-22h9q14 8 5 22z" fill="#d6c2a4"/>
+  <path d="M388 72q-3-15-14-19m14 18q0-18 13-21m-12 23q5-10 14-9" stroke="#a5ae89" stroke-width="2" fill="none"/>
+  <path d="M307 142v-28h8v28m64 0v-28h10v28m3 0v-34h9v34" fill="#c3a88b" stroke="#705c4d" stroke-width="1.5"/>
+  <rect x="314" y="162" width="35" height="27" rx="3" fill="#b7b999"/>
+  <path d="M324 170h14m28 19v-20h27v20m-23-14h19" stroke="#d9c9a9" fill="none" stroke-width="2"/>
+  <path d="M294 41h122m-122 177h122" stroke="#caa98b" stroke-width="6" stroke-linecap="round"/>
+  <!-- Rug, low cabinet, plant -->
+  <ellipse cx="226" cy="372" rx="181" ry="38" fill="#a0806d" opacity=".18"/>
+  <ellipse cx="218" cy="365" rx="178" ry="38" fill="#a8af91"/>
+  <ellipse cx="218" cy="365" rx="165" ry="29" fill="none" stroke="#e2dbb8" stroke-width="2" stroke-dasharray="2 5"/>
+  <path d="m195 367 23-12 23 12-23 12z" fill="none" stroke="#d3d3b0" stroke-width="2"/>
+  <path d="M39 258h86v67H39z" fill="#a48167" stroke="#896c53" stroke-width="2"/>
+  <path d="m31 251 11-13h81l12 13-8 13H38z" fill="#cfab89" stroke="#99795e" stroke-width="2"/>
+  <path d="M47 270h69v19H47zm0 24h69v20H47z" fill="#b59275" stroke="#98785e"/>
+  <path d="M74 279h16m-16 24h16M47 324v9m69-9v9" stroke="#735c48" stroke-width="4" stroke-linecap="round"/>
+  <path d="m384 297 6 39h22l7-39z" fill="#c99278" stroke="#a87862" stroke-width="2"/>
+  <path d="M401 299q-15-33-26-38m26 38q1-40-7-48m7 48q10-31 26-37" stroke="#798e72" stroke-width="2" fill="none"/>
+  <path d="M386 278q-19 0-20-22 18 3 20 22m14-7q-17-7-12-26 15 10 12 26m9 10q2-19 21-24-1 21-21 24" fill="#95a686"/>
+  <!-- Desk, papers, brass lamp -->
+  <path d="M176 266h178v80H176z" fill="#a68266" stroke="#87684e" stroke-width="2"/>
+  <path d="M181 276h18v69h-18zm149 0h18v69h-18z" fill="#927054"/>
+  <path d="m165 254 25-37h130l47 38-11 65H164z" fill="#d1ad88" stroke="#9b795b" stroke-width="2"/>
+  <path d="M164 320h192v13H164z" fill="#9e785d"/>
+  <path d="M171 316h178" stroke="#ebc7a4" stroke-width="2"/>
+  <path d="m267 239 38-7 23 21-43 8z" fill="#f1e3c8" stroke="#b5987a"/>
+  <path d="m281 242 22-4m-18 9 20-4m-15 9 16-3" stroke="#b6a78d" stroke-linecap="round"/>
+  <path d="m279 284 35-15 35 21-6 22h-53z" fill="#b6aa84" stroke="#9f8d6c"/>
+  <path d="M207 235q-2-8 1-26t12-20" fill="none" stroke="#8d7758" stroke-width="4"/>
+  <ellipse cx="207" cy="237" rx="17" ry="4" fill="#a28b65"/>
+  <path d="M221 184q19-15 31 6l-30 13z" fill="#9aa88a" stroke="#72826c" stroke-width="2"/>
+  <path d="m224 201 26-10 19 44-50 8z" fill="#fff1b1" opacity=".25"/>
+  <!-- Upholstered chair in front -->
+  <ellipse cx="112" cy="385" rx="58" ry="10" fill="#5f6956" opacity=".16"/>
+  <path d="m72 367 3 19m72-19-4 19" stroke="#82694e" stroke-width="6" stroke-linecap="round"/>
+  <path d="M67 351v-34q0-29 22-30h38q25 0 26 30v36z" fill="#adbc9c" stroke="#7f9074" stroke-width="2"/>
+  <path d="M75 347v-29q0-21 16-22h34q18 1 19 22v29" fill="#bdc8aa" stroke="#98a689" stroke-width="2"/>
+  <path d="M61 337q14-6 19 15h62q5-21 18-15l1 31q-3 7-12 7H74q-11-1-13-11z" fill="#9cac8c" stroke="#778a70" stroke-width="2"/>
+  <path d="M79 358h64" stroke="#b9c4a7" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -305,9 +305,15 @@
     isCompleted: () => state.completedMissionIds.includes('002'),
     archive: () => archiveMission('002')
   });
+  const objects = createObjectsMission({
+    ...missionUI,
+    isCompleted: () => state.completedMissionIds.includes('003'),
+    archive: () => archiveMission('003')
+  });
   function openPanel(kind,missionId) {
     letters.clearView();
     photo.clearView();
+    objects.clearView();
     panelBody.replaceChildren();
     $('#panel-kicker').textContent = 'LOVE QUEST · Дело №04';
     if (kind === 'letters') {
@@ -316,6 +322,9 @@
     } else if (kind === 'photo') {
       if (statusOf(MISSIONS[1]) === 'locked') return;
       photo.open();
+    } else if (kind === 'objects') {
+      if (statusOf(MISSIONS[2]) === 'locked') return;
+      objects.open();
     } else if (kind === 'case') {
       const mission = MISSIONS.find(item => item.id === missionId);
       if (!mission) return;
@@ -343,13 +352,15 @@
           const fragment=element('div',undefined,'fragment-display');
           fragment.append(element('p','Найденный фрагмент','fragment-label'),element('span',mission.clueFragment,'clue-word clue-token'));
           panelBody.append(fragment);
-        } else if (mission.id !== '001' && mission.id !== '002') {
+        } else if (mission.id !== '001' && mission.id !== '002' && mission.id !== '003') {
           panelBody.append(element('div',mission.type === 'runner' ? 'Дело готовится. Парк ещё не принимает участников этого расследования. Его история появится здесь чуть позже.' : 'Дело готовится. Мы бережно собираем эту историю. Пока можно осмотреть городок и заглянуть в журнал.','pending-note'));
         }
         if (mission.id === '001') {
           panelBody.append(panelButton(status === 'completed' ? 'Открыть письмо' : 'Войти в Дом воспоминаний',() => openPanel('letters'),true));
         } else if (mission.id === '002') {
           panelBody.append(panelButton(status === 'completed' ? 'Открыть снимок из архива' : 'Восстановить фотографию',() => openPanel('photo'),true));
+        } else if (mission.id === '003') {
+          panelBody.append(panelButton(status === 'completed' ? 'Открыть улики из архива' : 'Войти в Детективное бюро',() => openPanel('objects'),true));
         }
       }
       panelBody.append(panelButton('Вернуться на карту',() => panel.close()));
@@ -388,7 +399,7 @@
       panel.showModal();
     }
     panel.scrollTop = 0;
-    if (kind === 'letters' || kind === 'photo') panelTitle.focus({preventScroll:true});
+    if (kind === 'letters' || kind === 'photo' || kind === 'objects') panelTitle.focus({preventScroll:true});
     else $('#close-panel').focus({preventScroll:true});
   }
   function renderDevTools() {
@@ -407,6 +418,7 @@
       const undone = state.completedMissionIds.pop();
       if (undone === '001') letters.reset();
       if (undone === '002') photo.reset();
+      if (undone === '003') objects.reset();
       if (panel.open) panel.close();
       saveState(); render(); announce('Последнее завершение отменено.');
     });
@@ -416,6 +428,7 @@
       state = freshState(); storageReset = false;
       letters.reset();
       photo.reset();
+      objects.reset();
       saveState(); render(); showIntro(); announce('Прогресс сброшен.');
     }),panelButton('Показать вступление',showIntro));
     tools.append(actions,element('p','Для обычного режима убери ?dev=1 из адреса. Тестовые находки останутся; перед передачей игроку сбрось прогресс.','dev-warning'));
@@ -448,6 +461,7 @@
   panel.addEventListener('close',() => {
     letters.clearView();
     photo.clearView();
+    objects.clearView();
     panelBody.replaceChildren();
     panelTitle.textContent = '';
     if (!app.hidden) {
