@@ -310,10 +310,16 @@
     isCompleted: () => state.completedMissionIds.includes('003'),
     archive: () => archiveMission('003')
   });
+  const library = createLibraryMission({
+    ...missionUI,
+    isCompleted: () => state.completedMissionIds.includes('004'),
+    archive: () => archiveMission('004')
+  });
   function openPanel(kind,missionId) {
     letters.clearView();
     photo.clearView();
     objects.clearView();
+    library.clearView();
     panelBody.replaceChildren();
     $('#panel-kicker').textContent = 'LOVE QUEST · Дело №04';
     if (kind === 'letters') {
@@ -325,14 +331,17 @@
     } else if (kind === 'objects') {
       if (statusOf(MISSIONS[2]) === 'locked') return;
       objects.open();
+    } else if (kind === 'library') {
+      if (statusOf(MISSIONS[3]) === 'locked') return;
+      library.open();
     } else if (kind === 'case') {
       const mission = MISSIONS.find(item => item.id === missionId);
       if (!mission) return;
       const status = statusOf(mission);
       $('#panel-kicker').textContent = 'Карточка дела · ' + mission.id;
       panelTitle.textContent = mission.locationName;
-      if (mission.id === '002' && status !== 'locked') {
-        $('#panel-kicker').textContent = 'Фотостудия · Дело 002';
+      if ((mission.id === '002' || mission.id === '004') && status !== 'locked') {
+        $('#panel-kicker').textContent = mission.locationName + ' · Дело ' + mission.id;
         panelTitle.textContent = mission.title;
       }
       const art = element('div',undefined,'case-art');
@@ -352,7 +361,7 @@
           const fragment=element('div',undefined,'fragment-display');
           fragment.append(element('p','Найденный фрагмент','fragment-label'),element('span',mission.clueFragment,'clue-word clue-token'));
           panelBody.append(fragment);
-        } else if (mission.id !== '001' && mission.id !== '002' && mission.id !== '003') {
+        } else if (mission.id !== '001' && mission.id !== '002' && mission.id !== '003' && mission.id !== '004') {
           panelBody.append(element('div',mission.type === 'runner' ? 'Дело готовится. Парк ещё не принимает участников этого расследования. Его история появится здесь чуть позже.' : 'Дело готовится. Мы бережно собираем эту историю. Пока можно осмотреть городок и заглянуть в журнал.','pending-note'));
         }
         if (mission.id === '001') {
@@ -361,6 +370,8 @@
           panelBody.append(panelButton(status === 'completed' ? 'Открыть снимок из архива' : 'Восстановить фотографию',() => openPanel('photo'),true));
         } else if (mission.id === '003') {
           panelBody.append(panelButton(status === 'completed' ? 'Открыть улики из архива' : 'Войти в Детективное бюро',() => openPanel('objects'),true));
+        } else if (mission.id === '004') {
+          panelBody.append(panelButton('Войти в библиотеку',() => openPanel('library'),true));
         }
       }
       panelBody.append(panelButton('Вернуться на карту',() => panel.close()));
@@ -399,7 +410,7 @@
       panel.showModal();
     }
     panel.scrollTop = 0;
-    if (kind === 'letters' || kind === 'photo' || kind === 'objects') panelTitle.focus({preventScroll:true});
+    if (kind === 'letters' || kind === 'photo' || kind === 'objects' || kind === 'library') panelTitle.focus({preventScroll:true});
     else $('#close-panel').focus({preventScroll:true});
   }
   function renderDevTools() {
@@ -419,6 +430,7 @@
       if (undone === '001') letters.reset();
       if (undone === '002') photo.reset();
       if (undone === '003') objects.reset();
+      if (undone === '004') library.reset();
       if (panel.open) panel.close();
       saveState(); render(); announce('Последнее завершение отменено.');
     });
@@ -429,6 +441,7 @@
       letters.reset();
       photo.reset();
       objects.reset();
+      library.reset();
       saveState(); render(); showIntro(); announce('Прогресс сброшен.');
     }),panelButton('Показать вступление',showIntro));
     tools.append(actions,element('p','Для обычного режима убери ?dev=1 из адреса. Тестовые находки останутся; перед передачей игроку сбрось прогресс.','dev-warning'));
@@ -462,6 +475,7 @@
     letters.clearView();
     photo.clearView();
     objects.clearView();
+    library.clearView();
     panelBody.replaceChildren();
     panelTitle.textContent = '';
     if (!app.hidden) {

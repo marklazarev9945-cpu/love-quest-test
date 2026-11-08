@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="420" viewBox="0 0 480 420">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1">
+      <stop stop-color="#f1e7d1"/><stop offset="1" stop-color="#e0c7a6"/>
+    </linearGradient>
+    <linearGradient id="glass" x2="0" y2="1">
+      <stop stop-color="#b7d2cd"/><stop offset="1" stop-color="#f8e5b5"/>
+    </linearGradient>
+    <linearGradient id="wood" x2="0" y2="1">
+      <stop stop-color="#d9b590"/><stop offset="1" stop-color="#af8969"/>
+    </linearGradient>
+    <linearGradient id="page" x2="0" y2="1">
+      <stop stop-color="#fff9e4"/><stop offset="1" stop-color="#e8d8b5"/>
+    </linearGradient>
+    <pattern id="wallpaper" width="26" height="30" patternUnits="userSpaceOnUse">
+      <path d="m13 6-2 3 2 3 2-3z" fill="none" stroke="#b4a382" stroke-width=".8" opacity=".35"/>
+    </pattern>
+    <g id="books">
+      <rect x="3" y="7" width="11" height="38" rx="1" fill="#8b9d85"/>
+      <rect x="16" y="1" width="14" height="44" rx="1" fill="#c29c82"/>
+      <rect x="32" y="12" width="9" height="33" rx="1" fill="#d8c99f"/>
+      <path d="m46 45-5-37 12-2 5 37z" fill="#8faaa0"/>
+      <rect x="62" y="4" width="13" height="41" rx="1" fill="#ba8e88"/>
+      <rect x="78" y="13" width="10" height="32" rx="1" fill="#b6b691"/>
+      <path d="M6 15h5m-5 22h5m8-25h8m-8 25h8m37-24h7m-7 25h7" stroke="#e6d7b1" stroke-width="2"/>
+    </g>
+    <g id="shelf">
+      <rect x="0" y="0" width="111" height="240" rx="5" fill="#9e7c60" opacity=".2" transform="translate(5 4)"/>
+      <rect x="0" y="0" width="111" height="240" rx="5" fill="#b08b6a" stroke="#8c6d52" stroke-width="2"/>
+      <path d="M9 11h93v214H9z" fill="#8e735a"/>
+      <use href="#books" x="10" y="17"/>
+      <use href="#books" x="10" y="78"/>
+      <use href="#books" x="10" y="139"/>
+      <path d="M5 67h101M5 128h101M5 189h101" stroke="#d1ad87" stroke-width="7"/>
+      <path d="M0 2h111M0 232h111" stroke="#caab89" stroke-width="6" stroke-linecap="round"/>
+      <rect x="12" y="198" width="87" height="23" rx="2" fill="#ba9775"/>
+      <path d="M51 210h10" stroke="#7a654e" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </defs>
+  <path fill="url(#wall)" d="M0 0h480v306H0z"/>
+  <path fill="url(#wallpaper)" d="M0 0h480v306H0z"/>
+  <path d="M0 245h480v60H0z" fill="#b4ba9b"/>
+  <path d="M0 251h480m-480 46h480M22 251v46m45-46v46m45-46v46m45-46v46m45-46v46m45-46v46m45-46v46m45-46v46m45-46v46m45-46v46" stroke="#8d9d80" opacity=".6" fill="none"/>
+  <path d="M0 304h480v116H0z" fill="#d2b393"/>
+  <path d="M0 331h480M0 368h480M0 410h480M98 305 18 420m136-115-40 115m126-115v115m86-115 40 115m16-115 80 115" stroke="#ab8a6e" stroke-width="1.5" opacity=".4" fill="none"/>
+  <path d="M0 303h480" stroke="#a38769" stroke-width="7"/>
+  <!-- Sunlit arch and a little garden outside -->
+  <path d="M167 223V84a73 73 0 0 1 146 0v139z" fill="#b99e7a" opacity=".2" transform="translate(5 5)"/>
+  <path d="M167 223V84a73 73 0 0 1 146 0v139z" fill="url(#glass)" stroke="#ac9472" stroke-width="7"/>
+  <circle cx="267" cy="86" r="21" fill="#fff0bb"/>
+  <path d="M171 171q42-47 78-16t59-6v70H171z" fill="#b8c49d"/>
+  <path d="M171 194q41-35 82-15t55-10v50H171z" fill="#8ea88c"/>
+  <path d="M190 200v-21l19-12 19 12v21m37 3v-18l16-12 17 12v18" fill="#edd7b3"/>
+  <path d="M185 180 209 163l24 17m27 7 21-19 21 19" fill="none" stroke="#b68f77" stroke-width="4"/>
+  <path d="M240 16v207m-71-95h141" stroke="#c6ad87" stroke-width="5"/>
+  <path d="M159 225h163" stroke="#aa8d6c" stroke-width="8" stroke-linecap="round"/>
+  <path d="M166 50q-14 69 1 156h-23q13-89 2-154m168-2q14 69-1 156h23q-13-89-2-154" fill="#d5aa91" opacity=".8"/>
+  <path d="m171 128 137 0 112 264H30Z" fill="#fff2bd" opacity=".14"/>
+  <!-- Tall shelves frame one continuous room -->
+  <use href="#shelf" x="20" y="47"/>
+  <use href="#shelf" x="350" y="47"/>
+  <path d="M13 41h125m206 0h124" stroke="#8c7256" stroke-width="9" stroke-linecap="round"/>
+  <path d="M29 34q16-10 34 0m319 0q18-10 36 0" stroke="#b8a37f" fill="none" stroke-width="3"/>
+  <!-- Framed clock and plants -->
+  <circle cx="240" cy="52" r="17" fill="#a88a67"/>
+  <circle cx="240" cy="52" r="13" fill="#f4e7c7"/>
+  <path d="M240 43v10l7 4" fill="none" stroke="#7e7e64" stroke-width="2" stroke-linecap="round"/>
+  <path d="M79 319h26l-4 25H84z" fill="#bd8e75"/>
+  <path d="M92 318q-17-28-21-22m21 22q-1-27 7-33m-7 33q15-24 22-21" stroke="#819776" stroke-width="2" fill="none"/>
+  <path d="M83 307q-18-2-17-17 17 3 17 17m12-5q-6-19 7-23 7 16-7 23m7 6q1-15 17-16-3 17-17 16" fill="#9aaf88"/>
+  <path d="M384 296v36m-12-29 12 8 14-10" stroke="#a39473" stroke-width="2"/>
+  <path d="M381 307q-17-1-18-18 17 3 18 18m9 0q2-16 17-18-3 17-17 18" fill="#92a383"/>
+  <path d="M371 329h26l-4 22h-18z" fill="#c6ad8b"/>
+  <!-- Rug, chair and writing table -->
+  <ellipse cx="240" cy="373" rx="165" ry="37" fill="#a9b396"/>
+  <ellipse cx="240" cy="373" rx="153" ry="28" fill="none" stroke="#e4d9b4" stroke-width="2" stroke-dasharray="3 5"/>
+  <path d="m198 366 42-18 42 18-42 18z" stroke="#d4d4ae" fill="none" stroke-width="2"/>
+  <path d="M219 287v-38q0-20 20-20h24q20 0 20 20v38" fill="#9eae90" stroke="#7c9074" stroke-width="3"/>
+  <path d="M227 272v-20q0-15 14-15h20q14 0 14 15v20" stroke="#bdc7aa" fill="none" stroke-width="2"/>
+  <path d="M145 305v65m186-65v65" stroke="#927051" stroke-width="12" stroke-linecap="round"/>
+  <path d="M146 309h187v14H146z" fill="#a17b58" stroke="#88684d" stroke-width="2"/>
+  <path d="M205 324h70v21h-70z" fill="#c3a17e" stroke="#927251"/>
+  <path d="M235 334h10" stroke="#836f4f" stroke-width="3" stroke-linecap="round"/>
+  <path d="m131 307 18-42h179l25 42-6 13H136z" fill="url(#wood)" stroke="#977151" stroke-width="2"/>
+  <path d="M137 309h210" stroke="#ebcaa2" stroke-width="3" stroke-linecap="round"/>
+  <!-- Desk lamp -->
+  <ellipse cx="170" cy="286" rx="18" ry="4" fill="#b2996d"/>
+  <path d="M170 283v-33q0-10 10-14" stroke="#8c8060" stroke-width="4" fill="none"/>
+  <path d="M178 232q19-15 30 7l-30 12z" fill="#95a786" stroke="#6f876c" stroke-width="2"/>
+  <path d="m180 249 27-10 19 58h-50z" fill="#fff1b6" opacity=".26"/>
+  <!-- Two closed books and a ceramic cup -->
+  <path d="m294 276 23-5 10 8-24 6z" fill="#93756c" stroke="#80665b"/>
+  <path d="m301 282 23-5v5l-23 5z" fill="#e6d4b2"/>
+  <path d="m299 288 25-6 10 8-25 7z" fill="#92a18c" stroke="#72836d"/>
+  <path d="M314 261h12v12q-6 6-12 0z" fill="#e5d4b2" stroke="#ac9676"/>
+  <path d="M326 263q10-1 8 6-2 4-8 2" fill="none" stroke="#ac9676" stroke-width="2"/>
+  <!-- Open book, the interactive scene target -->
+  <path d="m199 282 42-8 42 10 6 30-47-5-47 3z" fill="#9d7860" stroke="#7d644c" stroke-width="2"/>
+  <path d="m200 278 41-8 40 10 4 29q-22-10-43-4-20-8-45 2z" fill="url(#page)" stroke="#bca07a" stroke-width="1.5"/>
+  <path d="m241 270 1 35m-36-20 23-4m-25 11 25-4m-25 11 25-4m20-8 25 5m-25 2 26 5" stroke="#bfa882" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="m239 306-1 17 5-4 4 3-4-16" fill="#bc8676"/>
+  <path d="m270 300 7 2m-6-8 7 2" stroke="#9ba387" stroke-width="1.5"/>
+</svg>
