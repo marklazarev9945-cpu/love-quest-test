@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="420" viewBox="0 0 480 420">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1">
+      <stop stop-color="#f2e6ce"/><stop offset="1" stop-color="#dec4a2"/>
+    </linearGradient>
+    <linearGradient id="glass" x2="0" y2="1">
+      <stop stop-color="#bed3cc"/><stop offset="1" stop-color="#f9e8b8"/>
+    </linearGradient>
+    <linearGradient id="table" x2="0" y2="1">
+      <stop stop-color="#d5b08a"/><stop offset="1" stop-color="#b38e6e"/>
+    </linearGradient>
+    <radialGradient id="light">
+      <stop stop-color="#fff2ba" stop-opacity=".65"/><stop offset="1" stop-color="#fff2ba" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="paper" width="28" height="32" patternUnits="userSpaceOnUse">
+      <path d="m14 5-2 4 2 4 2-4z" fill="none" stroke="#a99675" stroke-width=".7" opacity=".3"/>
+    </pattern>
+    <g id="binders">
+      <rect x="0" y="5" width="17" height="44" rx="2" fill="#9ba88b"/>
+      <rect x="19" y="0" width="18" height="49" rx="2" fill="#c19b81"/>
+      <rect x="40" y="8" width="16" height="41" rx="2" fill="#c7bd95"/>
+      <rect x="59" y="2" width="19" height="47" rx="2" fill="#9dada0"/>
+      <rect x="82" y="6" width="17" height="43" rx="2" fill="#bd9590"/>
+      <path d="M5 16h7v12H5zm19-6h8v13h-8zm20 8h7v11h-7zm21-6h7v11h-7zm21 5h8v12h-8z" fill="#efdfbd"/>
+      <g fill="#786e57"><circle cx="9" cy="40" r="2"/><circle cx="28" cy="39" r="2"/><circle cx="48" cy="40" r="2"/><circle cx="69" cy="39" r="2"/><circle cx="90" cy="40" r="2"/></g>
+    </g>
+    <g id="photo">
+      <path d="M0 0h33v39H0z" fill="#faf1db" stroke="#a69070"/>
+      <path d="M4 4h25v25H4z" fill="#bbd1c6"/>
+      <circle cx="21" cy="11" r="4" fill="#f7e7af"/>
+      <path d="m4 25 9-10 7 7 4-4 5 7v4H4z" fill="#8f9f81"/>
+    </g>
+  </defs>
+  <path d="M0 0h480v308H0z" fill="url(#wall)"/>
+  <path d="M0 0h480v308H0z" fill="url(#paper)"/>
+  <path d="M0 242h480v63H0z" fill="#b4b89a"/>
+  <path d="M0 249h480M0 298h480M20 249v49m45-49v49m45-49v49m45-49v49m45-49v49m45-49v49m45-49v49m45-49v49m45-49v49m45-49v49" stroke="#91a080" opacity=".5"/>
+  <path d="M0 305h480v115H0z" fill="#d8b99b"/>
+  <path d="M0 333h480M0 368h480M0 409h480M99 305 18 420m136-115-40 115m126-115v115m86-115 40 115m16-115 80 115" stroke="#ae8b70" fill="none" opacity=".35"/>
+  <path d="M0 304h480" stroke="#a98c6d" stroke-width="6"/>
+  <!-- Archive cabinet, binders and the little card index -->
+  <rect x="24" y="45" width="138" height="259" rx="5" fill="#97785a" opacity=".22" transform="translate(5 4)"/>
+  <rect x="24" y="45" width="138" height="259" rx="5" fill="#aa8968" stroke="#876e51" stroke-width="2"/>
+  <path d="M34 59h117v183H34z" fill="#8f7359"/>
+  <use href="#binders" x="42" y="68"/>
+  <use href="#binders" x="42" y="128"/>
+  <path d="M31 122h124m-124 60h124m-124 61h124" stroke="#cfaa81" stroke-width="7"/>
+  <path d="M40 197h47v38H40zm55-3h48v41H95z" fill="#c4b38f" stroke="#ad9673" stroke-width="2"/>
+  <path d="M37 199h53m2-3h54" stroke="#e2c9a2" stroke-width="5"/>
+  <path d="M52 211h23v10H52zm54-1h25v10h-25z" fill="#f0e2bd"/>
+  <rect x="35" y="252" width="116" height="40" rx="3" fill="#c29f7b"/>
+  <path d="M35 272h116M73 253v39m39-39v39" stroke="#967555"/>
+  <path d="M45 261h17m20 0h20m20 0h18m-95 20h17m20 0h20m20 0h18" stroke="#e0c29b" stroke-width="3"/>
+  <path d="M18 41h150m-150 261h150" stroke="#997953" stroke-width="7" stroke-linecap="round"/>
+  <!-- Shelf of tied boxes above the noticeboard -->
+  <path d="M187 64h115m-106 0v13m97-13v13" stroke="#9c7f60" stroke-width="5" stroke-linecap="round"/>
+  <rect x="196" y="30" width="43" height="31" rx="2" fill="#b3ba9e" stroke="#8c9c7e"/>
+  <rect x="247" y="23" width="46" height="38" rx="2" fill="#d3b595" stroke="#b49a79"/>
+  <path d="M193 35h48m3-7h52m-80 7v26m52-33v33" stroke="#efe0b7" stroke-width="3"/>
+  <path d="M208 47h18m-18 5h18m52-8h10m-10 5h10" stroke="#7f826b" stroke-width="1.5"/>
+  <!-- Board with postcards, twine and a pressed leaf -->
+  <rect x="187" y="92" width="108" height="112" rx="5" fill="#b89977" stroke="#987b5e" stroke-width="3"/>
+  <path d="M195 107q43 17 92-1" stroke="#937557" fill="none" stroke-width="1.5"/>
+  <use href="#photo" x="201" y="114" transform="rotate(-7 217 134)"/>
+  <use href="#photo" x="248" y="116" transform="rotate(8 264 135)"/>
+  <path d="M211 108v10m49-9v11" stroke="#a77962" stroke-width="3" stroke-linecap="round"/>
+  <path d="m216 174 41-5 3 21-41 5z" fill="#efe1c0"/>
+  <path d="m224 179 25-3m-24 8 19-2" stroke="#baaa88" stroke-width="1.5"/>
+  <path d="M270 190v-21m0 13q-14 0-11-12 11 1 11 12m0-5q14-2 10-14-11 3-10 14" fill="#9aa382" stroke="#879374"/>
+  <!-- Round window and afternoon light -->
+  <circle cx="382" cy="115" r="60" fill="#b59d78" opacity=".18" transform="translate(4 4)"/>
+  <circle cx="382" cy="115" r="60" fill="url(#glass)" stroke="#a48d6b" stroke-width="6"/>
+  <circle cx="402" cy="94" r="17" fill="#fff0b9"/>
+  <path d="M327 133q28-28 52-12t56 7q-15 43-53 45-39-2-55-40" fill="#a6b895"/>
+  <path d="M336 147q28-14 49 0t42-5q-14 30-45 31-32-1-46-26" fill="#8ba38a"/>
+  <path d="M382 57v116m-57-58h114" stroke="#c5ac85" stroke-width="5"/>
+  <path d="m332 121 103 17 35 231H211z" fill="#fff0bb" opacity=".14"/>
+  <path d="M328 183h111" stroke="#ad916d" stroke-width="6" stroke-linecap="round"/>
+  <!-- Pot, small case and rolled papers -->
+  <path d="m402 294 4 34h26l5-34z" fill="#c1967d" stroke="#a78065"/>
+  <path d="M419 295q-2-30-15-42m15 42q13-34 26-32m-26 32q-6-38 5-49" fill="none" stroke="#849471" stroke-width="2"/>
+  <path d="M413 277q-21-1-18-23 17 5 18 23m11-9q-11-15 2-27 9 14-2 27m3 10q4-18 24-18-7 20-24 18" fill="#9ead88"/>
+  <rect x="47" y="324" width="72" height="45" rx="6" fill="#b38f76" stroke="#94755f" stroke-width="2"/>
+  <path d="M47 336h72m-47-12v45m21-45v45m-17-45v-7h13v7" stroke="#d4b292" stroke-width="3" fill="none"/>
+  <path d="m126 330 18-44 7 3-17 45zm11 4 19-36 7 4-18 36z" fill="#ebdbb8" stroke="#baaa87"/>
+  <!-- Writing table and warm lamp -->
+  <ellipse cx="253" cy="377" rx="149" ry="31" fill="#a7b093"/>
+  <ellipse cx="253" cy="377" rx="136" ry="22" fill="none" stroke="#ddd4af" stroke-width="2" stroke-dasharray="2 5"/>
+  <path d="M159 313v66m193-66v66" stroke="#93704f" stroke-width="12" stroke-linecap="round"/>
+  <path d="M160 315h190v19H160z" fill="#ae8865" stroke="#906f50"/>
+  <path d="m143 310 22-48h174l27 48-6 13H149z" fill="url(#table)" stroke="#997454" stroke-width="2"/>
+  <path d="M150 312h208" stroke="#e6c39b" stroke-width="3"/>
+  <ellipse cx="188" cy="288" rx="19" ry="5" fill="#ae9368"/>
+  <path d="M188 284v-44q1-12 14-17" stroke="#8d8061" stroke-width="4" fill="none"/>
+  <path d="M200 218q19-15 32 10l-31 13z" fill="#91a184" stroke="#758569" stroke-width="2"/>
+  <path d="m203 240 28-11 21 65-56 3z" fill="#fff2b9" opacity=".25"/>
+  <ellipse cx="218" cy="268" rx="65" ry="60" fill="url(#light)"/>
+  <!-- Box of photographs: the only interactive scene target -->
+  <path d="m230 273 60-7 30 18-59 11z" fill="#ba9770" stroke="#8f7152" stroke-width="2"/>
+  <path d="m230 273-9-28 56-8 13 29z" fill="#c7aa85" stroke="#9b7e5e" stroke-width="2"/>
+  <path d="m227 248 46-6 10 21-49 7z" fill="#dcc4a0"/>
+  <use href="#photo" x="251" y="249" transform="rotate(8 268 270)"/>
+  <use href="#photo" x="274" y="253" transform="rotate(-9 289 274)"/>
+  <path d="m231 280 29 13 59-9-3 27-56 10-27-14z" fill="#b59471" stroke="#8d7155" stroke-width="2"/>
+  <path d="M260 294v27m-19-27 9 5m23-2 29-5v12l-29 6z" fill="#eadaba" stroke="#ad9472"/>
+  <path d="m279 300 16-3" stroke="#9c916f" stroke-width="1.5"/>
+  <path d="m327 296 16-3 7 5-17 4z" fill="#eee0c1" stroke="#b5a17d"/>
+</svg>
