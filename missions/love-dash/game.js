@@ -12,6 +12,47 @@
   let width=1,height=1,dpr=1,frameId=null,lastTime=null,swipeStart=null;
   const newState=()=>({mode:'start',lane:1,hearts:LOCAL_TEST_99_HEARTS?99:0,lives:3,objects:[],spawnClock:0,travel:0,invulnerable:0,ringClock:0,ringActive:false,ringCollected:false,serial:0,visualLane:1,effects:[],hitFlash:0,runClock:0});
   let state=newState();
+
+  // Same-origin shell bridge. Standalone play never establishes a session.
+  const questChannel = 'lovequest.love-dash';
+  const questOrigin = location.protocol === 'file:' ? 'null' : location.origin;
+  let questSession = null;
+
+  function postQuest(type, fields) {
+    if (!questSession || window.parent === window) return;
+    window.parent.postMessage({
+      channel: questChannel, version: 1, type, session: questSession, ...fields
+    }, questOrigin === 'null' ? '*' : questOrigin);
+  }
+
+  function notifyQuestState() {
+    postQuest('state', {mode: state.mode});
+  }
+
+  function notifyQuestVictory() {
+    if (state.mode !== 'won' || state.hearts < CONFIG.goal || !state.ringCollected) return;
+    postQuest('won', {hearts: state.hearts, ringCollected: true});
+  }
+
+  if (window.parent !== window) {
+    window.addEventListener('message', event => {
+      if (event.source !== window.parent || event.origin !== questOrigin) return;
+      const data = event.data;
+      if (!data || typeof data !== 'object' || Array.isArray(data) ||
+          Object.keys(data).sort().join(',') !== 'channel,session,type,version' ||
+          data.channel !== questChannel || data.version !== 1 ||
+          typeof data.session !== 'string' || !/^[a-f0-9]{32}$/.test(data.session)) return;
+      if (data.type === 'init') {
+        if (questSession && data.session !== questSession) return;
+        questSession = data.session;
+        postQuest('ready', {mode: state.mode});
+        return;
+      }
+      if (data.session !== questSession) return;
+      if (data.type === 'pause' && state.mode === 'playing') setMode('paused');
+      else if (data.type === 'resume' && state.mode === 'paused') resume();
+    });
+  }
   // Visual-only state. Gameplay coordinates, input, spawn and collisions are unchanged.
   const WORLDS=[{name:'Первое свидание',sky:'#b9e4fa',ground:'#a5c985',road:'#d9cbb0',edge:'#fff2d4'},{name:'Первое путешествие',sky:'#c6dce8',ground:'#91b6b8',road:'#c7b9ad',edge:'#f9e7d7'},{name:'Предложение',sky:'#a6ddf6',ground:'#e9d5a5',road:'#e1c9a7',edge:'#fff3d7'},{name:'Дом',sky:'#f4d9ba',ground:'#d7b9a2',road:'#d5b7a2',edge:'#fff1df'}];
   const WORLD_FADE=1.15, LABEL_TIME=2.8;
@@ -37,7 +78,7 @@
   function hud(){heartsUI.textContent=`♥ ${Math.min(state.hearts,CONFIG.goal)}/${CONFIG.goal}`;livesUI.textContent='●'.repeat(state.lives)+'○'.repeat(3-state.lives);pauseButton.textContent=state.mode==='paused'?'Продолжить':'Пауза';}
   function show(heading,body,button){title.textContent=heading;message.textContent=body;action.textContent=button;overlay.classList.remove('hidden');}
   function hide(){overlay.classList.add('hidden');}
-  function setMode(mode){state.mode=mode;lastTime=null;hud();if(mode==='playing')hide();else if(mode==='start')show('LOVE DASH','Собери 100 сердечек, найди кольцо и получи последнюю улику!','Играть');else if(mode==='paused')show('Пауза','Игра остановлена. Продолжим?','Продолжить');else if(mode==='recover')show('Сердечки на месте ♥','Жизни закончились, но собранные сердечки сохраняются.','Продолжить');else if(mode==='won')show('Победа! Последняя улика найдена','Ты собрала кольцо! ♥','Сыграть ещё раз');}
+  function setMode(mode){state.mode=mode;lastTime=null;hud();if(mode==='playing')hide();else if(mode==='start')show('LOVE DASH','Собери 100 сердечек, найди кольцо и получи последнюю улику!','Играть');else if(mode==='paused')show('Пауза','Игра остановлена. Продолжим?','Продолжить');else if(mode==='recover')show('Сердечки на месте ♥','Жизни закончились, но собранные сердечки сохраняются.','Продолжить');else if(mode==='won')show('Победа! Последняя улика найдена','Ты собрала кольцо! ♥','Сыграть ещё раз');notifyQuestState();}
   function restart(){state=newState();resetPark();worldIndex=0;previousWorld=0;worldFade=WORLD_FADE;labelAge=0;setMode('playing');}
   function resume(){if(state.mode==='recover'){state.lives=3;state.invulnerable=CONFIG.invulnerable;state.objects=state.objects.filter(o=>o.kind!=='obstacle');}setMode('playing');}
   function actionClick(){if(state.mode==='start'||state.mode==='won')restart();else if(state.mode==='recover'||state.mode==='paused')resume();}
@@ -79,7 +120,7 @@
       o.handled=true;
       if(o.lane===state.lane){
         if(o.kind==='heart'){state.hearts++;contactEffect('heart',o.lane);}
-        else if(o.kind==='ring'){state.ringCollected=true;setMode('won');break;}
+        else if(o.kind==='ring'){state.ringCollected=true;setMode('won');notifyQuestVictory();break;}
         else if(state.invulnerable<=0){state.lives--;state.invulnerable=CONFIG.invulnerable;contactEffect('hit',o.lane);if(state.lives===0){setMode('recover');break;}}
       }
       if(o.kind==='ring'){state.ringActive=false;state.ringClock=CONFIG.ringRetry;}

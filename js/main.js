@@ -246,8 +246,8 @@
     }).join('');
     const next = nextMission();
     $('#case-note-title').textContent = next ? CASE_NOTES[count][0] : 'Все фрагменты на своих местах.';
-    $('#next-step').textContent = next ? CASE_NOTES[count][1] : 'Шесть фрагментов найдены. Пора открыть журнал и прочитать послание целиком.';
-    $('#current-case').textContent = next ? 'Открыть текущее дело →' : 'Прочитать послание →';
+    $('#next-step').textContent = next ? CASE_NOTES[count][1] : 'Шесть дел раскрыты. Продолжение истории скоро.';
+    $('#current-case').textContent = next ? 'Открыть текущее дело →' : 'Продолжение истории →';
     if (DEV_ENABLED) renderDevTools();
     renderSaveNote();
     layoutTown(walkFrom);
@@ -320,12 +320,18 @@
     isCompleted: () => state.completedMissionIds.includes('005'),
     archive: () => archiveMission('005')
   });
+  const dash = createDashMission({
+    ...missionUI,
+    isCompleted: () => state.completedMissionIds.includes('006'),
+    archive: () => archiveMission('006')
+  });
   function openPanel(kind,missionId) {
     letters.clearView();
     photo.clearView();
     objects.clearView();
     library.clearView();
     travelArchive.clearView();
+    dash.clearView();
     panelBody.replaceChildren();
     $('#panel-kicker').textContent = 'LOVE QUEST · Дело №04';
     if (kind === 'letters') {
@@ -343,6 +349,9 @@
     } else if (kind === 'archive') {
       if (statusOf(MISSIONS[4]) === 'locked') return;
       travelArchive.open();
+    } else if (kind === 'dash') {
+      if (statusOf(MISSIONS[5]) === 'locked') return;
+      dash.open();
     } else if (kind === 'case') {
       const mission = MISSIONS.find(item => item.id === missionId);
       if (!mission) return;
@@ -370,8 +379,6 @@
           const fragment=element('div',undefined,'fragment-display');
           fragment.append(element('p','Найденный фрагмент','fragment-label'),element('span',mission.clueFragment,'clue-word clue-token'));
           panelBody.append(fragment);
-        } else if (mission.id !== '001' && mission.id !== '002' && mission.id !== '003' && mission.id !== '004' && mission.id !== '005') {
-          panelBody.append(element('div',mission.type === 'runner' ? 'Дело готовится. Парк ещё не принимает участников этого расследования. Его история появится здесь чуть позже.' : 'Дело готовится. Мы бережно собираем эту историю. Пока можно осмотреть городок и заглянуть в журнал.','pending-note'));
         }
         if (mission.id === '001') {
           panelBody.append(panelButton(status === 'completed' ? 'Открыть письмо' : 'Войти в Дом воспоминаний',() => openPanel('letters'),true));
@@ -383,6 +390,8 @@
           panelBody.append(panelButton('Войти в библиотеку',() => openPanel('library'),true));
         } else if (mission.id === '005') {
           panelBody.append(panelButton('Войти в Секретный архив',() => openPanel('archive'),true));
+        } else if (mission.id === '006') {
+          panelBody.append(panelButton(status === 'completed' ? 'Открыть результат LOVE DASH' : 'Войти в LOVE DASH',() => openPanel('dash'),true));
         }
       }
       panelBody.append(panelButton('Вернуться на карту',() => panel.close()));
@@ -399,13 +408,12 @@
         list.append(slot);
       });
       panelBody.append(list);
-      if (state.completedMissionIds.length === 6) panelBody.append(panelButton('Открыть послание',() => openPanel('final'),true));
-      else panelBody.append(element('p','Остальные слова пока под печатью. Полное послание откроется, когда будут найдены все шесть фрагментов.','quiet'));
+      if (state.completedMissionIds.length === 6) panelBody.append(panelButton('Продолжение истории',() => openPanel('final'),true));
+      else panelBody.append(element('p','Остальные слова пока под печатью. Продолжай расследование, чтобы найти все шесть фрагментов.','quiet'));
     } else if (kind === 'final') {
       if (state.completedMissionIds.length !== 6) return openPanel('journal');
-      const words = MISSIONS.map(mission => mission.clueFragment).join(' ').toLocaleLowerCase('ru-RU');
-      panelTitle.textContent = words.charAt(0).toLocaleUpperCase('ru-RU') + words.slice(1);
-      panelBody.append(element('div','6 / 6','final-seal'),element('p','Все слова сошлись. Это расследование привело к новой истории — и у неё будет своё продолжение.'),element('div','Продолжение готовится. Финальная глава появится здесь позже. Твои находки сохранены.','pending-note'),panelButton('Вернуться в городок',() => panel.close(),true));
+      panelTitle.textContent = 'Продолжение истории скоро';
+      panelBody.append(element('div','6 / 6','final-seal'),element('p','Все шесть дел раскрыты. Твои находки сохранены в журнале.'),element('div','У этой истории будет продолжение. Загляни сюда чуть позже.','pending-note'),panelButton('Вернуться в городок',() => panel.close(),true));
     } else if (kind === 'help') {
       panelTitle.textContent = 'Маленькая подсказка';
       panelBody.append(element('p','Иди за Катей на карте: она стоит у текущего дела. Нажми на здание, чтобы прочитать его карточку. Следующая дверь откроется после предыдущей находки.'),element('p','Слова послания хранятся в журнале. Заглядывай туда, когда захочется собрать мысли вместе.'),element('div','Первое дело ждёт в Доме воспоминаний. Открой его карточку и войди в дом, чтобы начать расследование.','pending-note'));
@@ -421,7 +429,7 @@
       panel.showModal();
     }
     panel.scrollTop = 0;
-    if (kind === 'letters' || kind === 'photo' || kind === 'objects' || kind === 'library' || kind === 'archive') panelTitle.focus({preventScroll:true});
+    if (kind === 'letters' || kind === 'photo' || kind === 'objects' || kind === 'library' || kind === 'archive' || kind === 'dash') panelTitle.focus({preventScroll:true});
     else $('#close-panel').focus({preventScroll:true});
   }
   function renderDevTools() {
@@ -443,6 +451,7 @@
       if (undone === '003') objects.reset();
       if (undone === '004') library.reset();
       if (undone === '005') travelArchive.reset();
+      if (undone === '006') dash.reset();
       if (panel.open) panel.close();
       saveState(); render(); announce('Последнее завершение отменено.');
     });
@@ -455,6 +464,7 @@
       objects.reset();
       library.reset();
       travelArchive.reset();
+      dash.reset();
       saveState(); render(); showIntro(); announce('Прогресс сброшен.');
     }),panelButton('Показать вступление',showIntro));
     tools.append(actions,element('p','Для обычного режима убери ?dev=1 из адреса. Тестовые находки останутся; перед передачей игроку сбрось прогресс.','dev-warning'));
@@ -477,12 +487,13 @@
     $('#map-title').scrollIntoView({block:'start',behavior:'auto'});
   });
   function dismissPanel() {
+    if (dash.requestClose()) return;
     if (!letters.closeZoom() && !photo.closePreview() && !travelArchive.closePreview()) panel.close();
   }
   $('#close-panel').addEventListener('click',dismissPanel);
   panel.addEventListener('click',event => { if (event.target === panel) dismissPanel(); });
   panel.addEventListener('cancel',event => {
-    if (letters.closeZoom() || photo.closePreview() || travelArchive.closePreview()) event.preventDefault();
+    if (dash.requestClose() || letters.closeZoom() || photo.closePreview() || travelArchive.closePreview()) event.preventDefault();
   });
   panel.addEventListener('close',() => {
     letters.clearView();
@@ -490,6 +501,7 @@
     objects.clearView();
     library.clearView();
     travelArchive.clearView();
+    dash.clearView();
     panelBody.replaceChildren();
     panelTitle.textContent = '';
     if (!app.hidden) {
