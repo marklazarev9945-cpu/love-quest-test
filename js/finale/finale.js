@@ -5,15 +5,25 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   const letters = [
     {
       id: 'home', numeral: 'I', title: 'Вечер, который останется на страницах',
-      text: 'Заказываем что-нибудь очень вкусное, устраиваемся поудобнее и наконец собираем наш фотоальбом. Вспоминаем поездки, смешные моменты, первые свидания и всё, что привело нас к сегодняшнему дню.'
+      paragraphs: [
+        'Катёнок, приглашаю тебя провести уютный вечер вдвоём. Давай закажем что-нибудь очень вкусное, устроимся поудобнее и наконец соберём наш фотоальбом. Будем выбирать фотографии, вспоминать наши поездки, первые свидания и смеяться над любимыми моментами.',
+        'Только ты, я и наши воспоминания ❤️'
+      ]
     },
     {
       id: 'city', numeral: 'II', title: 'Свидание вне привычного маршрута',
-      text: 'Наряжаемся, выбираемся из дома и идём туда, где ещё не были вместе. Идём гулять по центру, посещаем музей и вечером идём в ресторан.'
+      paragraphs: [
+        'Катёнок, приглашаю тебя на настоящее свидание! Давай красиво оденемся, отправимся в музей, погуляем по центру города, а вечером сходим в ресторан на вкусный ужин.',
+        'Обещаю, что организацию этого дня возьму на себя ❤️'
+      ]
     },
     {
       id: 'trip', numeral: 'III', title: 'Туда, где нас ещё не было',
-      text: 'Берём машину, включаем любимую музыку и отправляемся в маленькое путешествие. Едем за новым досугом, гуляем в городе и вкусно ужинаем. А вот место ты выберешь сама из двух.'
+      paragraphs: [
+        'Катёнок, приглашаю тебя в маленькое путешествие! Мы возьмём машину, включим любимую музыку и отправимся навстречу новым впечатлениям. Будем гулять, открывать интересные места и обязательно вкусно поужинаем.',
+        'А куда именно поедем, решишь ты: отдыхать в термах или знакомиться с древним миром в палеонтологическом музее.',
+        'Главное, что мы будем вместе ❤️'
+      ]
     }
   ];
   const destinations = {thermal: 'Термы и отдых', paleontology: 'Палеонтологический музей'};
@@ -22,10 +32,12 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   let canSave = true;
   let activeDelivery = null;
   let deliveryView = null;
+  let motionTimer;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function freshProgress() {
     return {screen: 'phrase', read: [], openLetter: null, draft: {option: null, suboption: null},
-      choice: null, delivery: null};
+      choice: null, delivery: null, endingSeen: false};
   }
 
   function readProgress() {
@@ -53,7 +65,9 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
         const {option, suboption, confirmedAt, submissionId} = saved.choice;
         next.choice = {option, suboption, confirmedAt, submissionId};
         next.delivery = ['pending', 'sent', 'failed'].includes(saved.delivery) ? saved.delivery : 'pending';
-        next.screen = 'ending';
+        // v0.1 went straight to the meeting after confirmation.
+        next.endingSeen = saved.endingSeen !== false;
+        next.screen = next.endingSeen ? 'ending' : 'sent';
       }
     } catch { /* The finale can also be played in memory. */ }
     return next;
@@ -72,6 +86,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   }
 
   function screen(name, heading) {
+    clearTimeout(motionTimer);
     deliveryView = null;
     progress.screen = name;
     save();
@@ -92,6 +107,26 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     const group = element('div', undefined, 'finale-actions');
     group.append(...controls);
     body.append(group);
+  }
+
+  function afterMotion(view, delay, finish) {
+    clearTimeout(motionTimer);
+    motionTimer = setTimeout(() => {
+      if (view.isConnected && panel.open) finish();
+    }, delay);
+  }
+
+  function makeEnvelope(numeral) {
+    const mail = element('div', undefined, 'finale-mail');
+    mail.setAttribute('aria-hidden', 'true');
+    mail.append(
+      element('span', undefined, 'finale-mail-back'),
+      element('span', undefined, 'finale-mail-flap'),
+      element('span', numeral, 'finale-mail-slip'),
+      element('span', undefined, 'finale-mail-pocket'),
+      element('span', '♥', 'finale-mail-seal')
+    );
+    return mail;
   }
 
   function showPhrase() {
@@ -131,7 +166,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     }
     body.append(scene);
     if (progress.choice) {
-      actions(button('Вернуться к финалу', () => showEnding(false), true), backToMap());
+      actions(button('Вернуться к финалу', showResult, true), backToMap());
     } else {
       const allRead = progress.read.length === letters.length;
       body.append(element('p', allRead ?
@@ -149,12 +184,25 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     if (!letter) return showOffice();
     progress.openLetter = id;
     screen('letter', letter.title);
-    const paper = element('article', undefined, 'finale-letter' + (animate ? ' finale-unfold' : ''));
-    paper.append(element('p', letter.text));
-    body.append(paper);
+    const stack = element('div', undefined, 'finale-letter-stack' + (animate ? ' is-opening' : ''));
+    const stage = element('div', undefined, 'finale-letter-stage');
+    stage.append(makeEnvelope(letter.numeral));
+    const paper = element('article', undefined, 'finale-letter');
+    for (const paragraph of letter.paragraphs) paper.append(element('p', paragraph));
+    stack.append(stage, paper);
+    body.append(stack);
     actions(button(progress.read.includes(id) ? 'К письмам' : 'Письмо прочитано', () => {
+      if (stack.classList.contains('is-closing')) return;
       if (!progress.read.includes(id)) progress.read.push(id);
-      showOffice(id);
+      progress.screen = 'office';
+      progress.openLetter = null;
+      save();
+      if (reducedMotion.matches) return showOffice(id);
+      stack.classList.remove('is-opening');
+      stack.classList.add('is-closing');
+      title.focus({preventScroll: true});
+      panel.scrollTop = 0;
+      afterMotion(stack, 470, () => showOffice(id));
     }, true), backToMap());
   }
 
@@ -166,7 +214,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   }
 
   function showChoice() {
-    if (progress.choice) return showEnding(false);
+    if (progress.choice) return showResult();
     if (progress.read.length !== letters.length) return showOffice();
     screen('choice', 'Выбери свидание');
     const options = element('fieldset', undefined, 'finale-options');
@@ -217,7 +265,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   }
 
   function showConfirmation() {
-    if (progress.choice) return showEnding(false);
+    if (progress.choice) return showResult();
     if (!isFinaleChoice(progress.draft)) return showChoice();
     screen('confirm', 'Отправить ответ организатору расследования?');
     body.append(choiceCard(progress.draft));
@@ -228,12 +276,13 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
         if (!confirm.isConnected || !panel.open || !isUnlocked() ||
             progress.screen !== 'confirm' || !isFinaleChoice(progress.draft)) return;
         adoptConfirmedChoice();
-        if (progress.choice) return showEnding(false);
+        if (progress.choice) return showResult();
         const bytes = crypto.getRandomValues(new Uint8Array(16));
         const submissionId = [...bytes].map(value => value.toString(16).padStart(2, '0')).join('');
         progress.choice = {...progress.draft, confirmedAt: new Date().toISOString(), submissionId};
         progress.delivery = 'pending';
-        showEnding(true);
+        progress.endingSeen = false;
+        showDispatch();
         void deliver();
       };
       if (navigator.locks) {
@@ -283,8 +332,44 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     updateDelivery();
   }
 
+  function showDispatch() {
+    if (reducedMotion.matches) return showSent();
+    // Persist the destination, so reopening never repeats the dispatch.
+    screen('sent', 'Запечатываем письмо');
+    const stage = element('div', undefined, 'finale-dispatch');
+    stage.append(makeEnvelope(letters.find(letter => letter.id === progress.choice.option).numeral));
+    body.append(stage);
+    actions(button('К приглашению', showSent, true), backToMap());
+    afterMotion(stage, 1120, showSent);
+  }
+
+  function showSent() {
+    screen('sent', 'Приглашение отправлено ❤️');
+    const stage = element('div', undefined, 'finale-sent-envelope');
+    stage.append(makeEnvelope(letters.find(letter => letter.id === progress.choice.option).numeral));
+    body.append(stage, choiceCard(progress.choice));
+    showDelivery();
+    actions(button('Открыть последнюю дверь', () => showEnding(true), true),
+      button('Перечитать письма', () => showOffice()), backToMap());
+  }
+
+  function showResult() {
+    if (progress.endingSeen) showEnding(false);
+    else showSent();
+  }
+
+  function showDelivery() {
+    const status = element('p', undefined, 'finale-note');
+    status.setAttribute('role', 'status');
+    const retry = button('Повторить отправку', () => void deliver());
+    deliveryView = {text: status, retry};
+    body.append(status, retry);
+    updateDelivery();
+  }
+
   function showEnding(animate) {
     if (!progress.choice) return showChoice();
+    progress.endingSeen = true;
     screen('ending', 'Четыре месяца как муж и жена ❤️');
     const scene = element('div', undefined, 'finale-ending-scene' + (animate ? ' is-animated' : ''));
     scene.innerHTML = FINALE_ENDING_ART;
@@ -292,12 +377,8 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     greeting.append(element('p', 'Спасибо за наши четыре месяца.'), element('p', 'Я люблю тебя. Твой муж ❤️'));
     const choice = choiceCard(progress.choice);
     choice.prepend(element('span', 'Твой выбор', 'eyebrow'));
-    const status = element('p', undefined, 'finale-note');
-    status.setAttribute('role', 'status');
-    const retry = button('Повторить отправку', () => void deliver());
-    deliveryView = {text: status, retry};
-    body.append(scene, greeting, choice, status, retry);
-    updateDelivery();
+    body.append(scene, greeting, choice);
+    showDelivery();
     actions(backToMap('Вернуться к воспоминаниям'),
       button('Посмотреть ещё раз', () => showEnding(true), true),
       button('Перечитать письма', () => showOffice()));
@@ -307,7 +388,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     open() {
       if (!isUnlocked()) return;
       adoptConfirmedChoice();
-      if (progress.choice) return showEnding(false);
+      if (progress.choice) return showResult();
       if (progress.screen === 'office') return showOffice();
       if (progress.screen === 'letter') return showLetter(progress.openLetter);
       if (progress.screen === 'choice') return showChoice();
@@ -315,10 +396,12 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
       showPhrase();
     },
     clearView() {
+      clearTimeout(motionTimer);
       deliveryView = null;
       panel.classList.remove('finale-panel');
     },
     reset() {
+      clearTimeout(motionTimer);
       notifications.cancel();
       activeDelivery = null;
       progress = freshProgress();

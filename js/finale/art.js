@@ -32,16 +32,23 @@ const FINALE_ENDING_ART = `
   <!-- Mark waits inside the room. -->
   <g class="finale-mark">
     <ellipse cx="360" cy="321" rx="28" ry="6" fill="#7a785f" opacity=".22"/>
-    <path d="m349 275-3 42m25-42 3 42" stroke="#758695" stroke-width="11" stroke-linecap="round"/>
-    <path d="M339 320h15m15 0h14" stroke="#e9dfcb" stroke-width="7" stroke-linecap="round"/>
-    <path d="M341 231q18-11 38 0l6 52h-51z" fill="#6d8a7a"/>
-    <path d="m343 238-13 27m47-27 13 24" stroke="#6d8a7a" stroke-width="9" stroke-linecap="round"/>
+    <path d="m348 275-3 42m25-42 4 42" stroke="#d4c9b6" stroke-width="13" stroke-linecap="round"/>
+    <path d="m350 286-2 26m24-26 3 26" stroke="#e5dac5" stroke-width="2" stroke-linecap="round"/>
+    <path d="M339 320h15m15 0h14" stroke="#f1e6d3" stroke-width="7" stroke-linecap="round"/>
+    <path d="m342 238-12 27m48-27 12 24" stroke="#d9cdbb" stroke-width="11" stroke-linecap="round"/>
     <path d="M330 269h.1m60-3h.1" stroke="#eac09f" stroke-width="9" stroke-linecap="round"/>
+    <path d="M340 231q20-9 40 0l5 52h-51z" fill="#e4dac8" stroke="#bba992" stroke-width="1.4"/>
+    <path d="M348 225q12-11 24 0l4 10-16 11-16-11z" fill="#e9e0d1" stroke="#c5b49d" stroke-width="1.5"/>
+    <path d="m342 231 13 12-2 39h-19zm36 0-13 12 2 39h18z" fill="#d9cdbb"/>
+    <path d="m347 227 11 13-13-2-7-5zm26 0-11 13 13-2 7-5z" fill="#f0e6d5" stroke="#c5b49d" stroke-width="1.2"/>
+    <path d="M338 249h13v12h-13zm31 0h13v12h-13z" fill="#e7dcc9" stroke="#bba992" stroke-width="1.2"/>
+    <path d="M338 250h13m18 0h13m-24-9 1 14m4-14-1 14" stroke="#b19d86" stroke-width="1.2" stroke-linecap="round"/>
     <ellipse cx="360" cy="212" rx="17" ry="20" fill="#ebc4a3"/>
-    <path d="M342 214q-8-22 9-27 24-10 28 23l-11-12-13 5-8 12z" fill="#756054"/>
+    <path d="M343 214q-6-16 3-23l5-6q14-2 22 5 8 7 5 22l-5-12q-9 4-17-2l-7 5-3 11z" fill="#7d6d59"/>
+    <path d="M348 194q9-7 20-1m-17-3q7-5 15-1" stroke="#a19179" stroke-width="1.6" fill="none" stroke-linecap="round"/>
     <path d="M353 213h.1m13 0h.1" stroke="#65554b" stroke-width="3" stroke-linecap="round"/>
-    <path d="M355 221q5 5 10-1" fill="none" stroke="#a87b66" stroke-width="2" stroke-linecap="round"/>
-    <path d="m346 232 14 8 14-8" fill="none" stroke="#c0cab3" stroke-width="2"/>
+    <path d="M354 221q6 6 12 0" fill="none" stroke="#a87b66" stroke-width="2" stroke-linecap="round"/>
+    <path d="M376 220v3" stroke="#f2e7d4" stroke-width="2.2" stroke-linecap="round"/>
   </g>
   <g class="finale-door" fill="#b79373" stroke="#987658" stroke-width="4">
     <path d="M204 314V134a114 114 0 0 1 229 0v180Z"/>
