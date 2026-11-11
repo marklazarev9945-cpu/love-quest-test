@@ -246,8 +246,8 @@
     }).join('');
     const next = nextMission();
     $('#case-note-title').textContent = next ? CASE_NOTES[count][0] : 'Все фрагменты на своих местах.';
-    $('#next-step').textContent = next ? CASE_NOTES[count][1] : 'Шесть дел раскрыты. Продолжение истории скоро.';
-    $('#current-case').textContent = next ? 'Открыть текущее дело →' : 'Продолжение истории →';
+    $('#next-step').textContent = next ? CASE_NOTES[count][1] : 'Шесть дел раскрыты. Последняя комната ждёт тебя.';
+    $('#current-case').textContent = next ? 'Открыть текущее дело →' : 'Открыть финал →';
     if (DEV_ENABLED) renderDevTools();
     renderSaveNote();
     layoutTown(walkFrom);
@@ -290,6 +290,11 @@
   };
   function archiveMission(missionId) {
     if (!completeMission(missionId)) return false;
+    if (missionId === '006') {
+      returnFocus = $('#current-case');
+      openPanel('final');
+      return true;
+    }
     returnFocus = $('#mission-map [aria-current="step"]');
     panel.close();
     $('.town').scrollIntoView({block:'start',behavior:'auto'});
@@ -325,6 +330,11 @@
     isCompleted: () => state.completedMissionIds.includes('006'),
     archive: () => archiveMission('006')
   });
+  const finale = createFinale({
+    ...missionUI,
+    fragments: MISSIONS.map(mission => mission.clueFragment),
+    isUnlocked: () => state.completedMissionIds.length === MISSIONS.length
+  });
   function openPanel(kind,missionId) {
     letters.clearView();
     photo.clearView();
@@ -332,6 +342,7 @@
     library.clearView();
     travelArchive.clearView();
     dash.clearView();
+    finale.clearView();
     panelBody.replaceChildren();
     $('#panel-kicker').textContent = 'LOVE QUEST · Дело №04';
     if (kind === 'letters') {
@@ -408,12 +419,11 @@
         list.append(slot);
       });
       panelBody.append(list);
-      if (state.completedMissionIds.length === 6) panelBody.append(panelButton('Продолжение истории',() => openPanel('final'),true));
+      if (state.completedMissionIds.length === 6) panelBody.append(panelButton('Открыть финал',() => openPanel('final'),true));
       else panelBody.append(element('p','Остальные слова пока под печатью. Продолжай расследование, чтобы найти все шесть фрагментов.','quiet'));
     } else if (kind === 'final') {
       if (state.completedMissionIds.length !== 6) return openPanel('journal');
-      panelTitle.textContent = 'Продолжение истории скоро';
-      panelBody.append(element('div','6 / 6','final-seal'),element('p','Все шесть дел раскрыты. Твои находки сохранены в журнале.'),element('div','У этой истории будет продолжение. Загляни сюда чуть позже.','pending-note'),panelButton('Вернуться в городок',() => panel.close(),true));
+      finale.open();
     } else if (kind === 'help') {
       panelTitle.textContent = 'Маленькая подсказка';
       panelBody.append(element('p','Иди за Катей на карте: она стоит у текущего дела. Нажми на здание, чтобы прочитать его карточку. Следующая дверь откроется после предыдущей находки.'),element('p','Слова послания хранятся в журнале. Заглядывай туда, когда захочется собрать мысли вместе.'),element('div','Первое дело ждёт в Доме воспоминаний. Открой его карточку и войди в дом, чтобы начать расследование.','pending-note'));
@@ -429,7 +439,7 @@
       panel.showModal();
     }
     panel.scrollTop = 0;
-    if (kind === 'letters' || kind === 'photo' || kind === 'objects' || kind === 'library' || kind === 'archive' || kind === 'dash') panelTitle.focus({preventScroll:true});
+    if (kind === 'letters' || kind === 'photo' || kind === 'objects' || kind === 'library' || kind === 'archive' || kind === 'dash' || kind === 'final') panelTitle.focus({preventScroll:true});
     else $('#close-panel').focus({preventScroll:true});
   }
   function renderDevTools() {
@@ -465,6 +475,7 @@
       library.reset();
       travelArchive.reset();
       dash.reset();
+      finale.reset();
       saveState(); render(); showIntro(); announce('Прогресс сброшен.');
     }),panelButton('Показать вступление',showIntro));
     tools.append(actions,element('p','Для обычного режима убери ?dev=1 из адреса. Тестовые находки останутся; перед передачей игроку сбрось прогресс.','dev-warning'));
@@ -502,6 +513,7 @@
     library.clearView();
     travelArchive.clearView();
     dash.clearView();
+    finale.clearView();
     panelBody.replaceChildren();
     panelTitle.textContent = '';
     if (!app.hidden) {

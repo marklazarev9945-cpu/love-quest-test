@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f4ead6"/><stop offset="1" stop-color="#dfc5a8"/></linearGradient>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#c2d8d3"/><stop offset="1" stop-color="#f5d7ae"/></linearGradient>
+    <radialGradient id="lamplight"><stop stop-color="#fff1bc" stop-opacity=".83"/><stop offset="1" stop-color="#fff1bc" stop-opacity="0"/></radialGradient>
+    <pattern id="paper" width="30" height="30" patternUnits="userSpaceOnUse"><path d="m15 8 2 4-2 4-2-4z" fill="none" stroke="#bcaa8c" opacity=".25"/></pattern>
+  </defs>
+  <path fill="url(#wall)" d="M0 0h640v323H0z"/><path fill="url(#paper)" d="M0 0h640v323H0z"/>
+  <path fill="#aab699" d="M0 237h640v86H0z"/><path d="M0 244h640M0 315h640M32 246v68m52-68v68m52-68v68m52-68v68m52-68v68m52-68v68m52-68v68m52-68v68m52-68v68m52-68v68m52-68v68m52-68v68" stroke="#8f9e82" opacity=".5"/>
+  <path fill="#cba889" d="M0 323h640v97H0z"/><path d="M0 348h640M0 382h640M112 323l-77 97m153-97-43 97m122-97-16 97m98-97 15 97m63-97 45 97m35-97 71 97" stroke="#a88970" opacity=".38"/>
+  <path d="M47 193V83a62 62 0 0 1 124 0v110Z" fill="url(#sky)" stroke="#ac8d6d" stroke-width="7"/>
+  <circle cx="111" cy="100" r="20" fill="#f9e7b7"/><path d="M51 152q36-30 68-7t48-9v53H51z" fill="#a2b89b"/>
+  <path d="M51 170q37-19 65-9t51-10v38H51z" fill="#869f87"/><path d="M109 23v169M49 119h120" stroke="#baa082" stroke-width="5"/>
+  <path d="M43 193h132" stroke="#ac8d6d" stroke-width="8" stroke-linecap="round"/>
+  <path d="M455 308V117a70 70 0 0 1 140 0v191z" fill="#b38f71" stroke="#947657" stroke-width="7"/>
+  <path d="M469 292V118a56 56 0 0 1 112 0v174z" fill="none" stroke="#d2b393" stroke-width="4"/>
+  <path d="M480 142h90v64h-90zm0 76h90v62h-90z" fill="#a78165" stroke="#c5a587" stroke-width="3"/><circle cx="562" cy="215" r="5" fill="#e6c887"/>
+  <rect x="239" y="52" width="133" height="89" rx="5" fill="#b39473" stroke="#957b5e" stroke-width="4"/>
+  <path d="m250 66 47-4 4 54-45 6zM313 65l43 7-6 50-43-8z" fill="#f8ead0"/>
+  <path d="m259 103 12-15 11 9 7-9 4 20z" fill="#97ad91"/><circle cx="282" cy="80" r="5" fill="#e6b581"/>
+  <path d="M329 91q-7-10-12-3-4 7 11 16 15-6 13-13-3-7-12 0z" fill="#bc887c"/>
+  <path d="M205 163h186" stroke="#a18262" stroke-width="7" stroke-linecap="round"/>
+  <path d="M218 159v-33h14v33m4 0v-43h14v43m3 0 4-36 15 2-4 34" fill="#95a68e" stroke="#7e9079" stroke-width="2"/>
+  <path d="M320 159q-5-18 8-23h10q11 8 6 23z" fill="#c9947a"/><path d="M333 140q-3-18-14-24m14 24q3-19 15-22" stroke="#819b7e" stroke-width="3" fill="none"/>
+  <ellipse cx="302" cy="368" rx="196" ry="38" fill="#98a88e"/><ellipse cx="302" cy="369" rx="181" ry="27" fill="none" stroke="#dfd7b2" stroke-width="2" stroke-dasharray="3 6"/>
+  <path d="M149 294v91m351-91v91" stroke="#987252" stroke-width="13" stroke-linecap="round"/>
+  <path d="m124 284 31-54h326l41 54-8 33H131z" fill="#d4af86" stroke="#a68262" stroke-width="3"/>
+  <path d="M133 310h378m-367 15h355" stroke="#a77f5d" stroke-width="5"/>
+  <path d="M166 266v-55q0-17 17-21" fill="none" stroke="#8a8061" stroke-width="5"/>
+  <ellipse cx="166" cy="270" rx="22" ry="6" fill="#ae9368"/>
+  <path d="M179 180q26-20 42 9l-40 17z" fill="#93a588" stroke="#728970" stroke-width="3"/>
+  <ellipse cx="236" cy="254" rx="109" ry="87" fill="url(#lamplight)"/>
+  <path d="m430 260 34-8 18 17-36 10z" fill="#8d9d84" stroke="#76836d" stroke-width="2"/>
+  <path d="m445 264 19-4" stroke="#ded2ac" stroke-width="2"/>
+  <!-- Mikaella, curled beside the desk -->
+  <ellipse cx="561" cy="366" rx="35" ry="9" fill="#9d826b" opacity=".3"/>
+  <path d="M574 360q30 6 27-15" stroke="#a6aaa0" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <ellipse cx="560" cy="350" rx="23" ry="16" fill="#b8bcb3"/>
+  <path d="m539 344-2-18 14 8 11-1 10-9 1 20" fill="#a9afa6"/>
+  <ellipse cx="556" cy="343" rx="18" ry="13" fill="#c5c9c0"/>
+  <path d="m545 343 4 1m12 0 4-1m-11 4 3 1" stroke="#677468" stroke-width="1.6" stroke-linecap="round"/>
+</svg>
