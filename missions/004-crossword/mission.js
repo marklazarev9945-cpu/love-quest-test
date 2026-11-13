@@ -101,16 +101,19 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
         const letter = saved.letters?.[key];
         if (typeof letter === 'string' && /^[А-ЯЁ]$/.test(letter)) state.letters[key] = letter;
       }
+      // Old saves use a word ID for its first letter. New hints use cell coordinates.
+      if (Array.isArray(saved.hints)) {
+        state.hints = [...new Set(saved.hints.filter(hint =>
+          cells.has(hint) || words.some(word => word.id === hint)))];
+        for (const hint of state.hints) {
+          const key = cells.has(hint) ? hint : words.find(word => word.id === hint).keys[0];
+          state.letters[key] = cells.get(key).answer;
+        }
+      }
       state.solved = words.filter(word =>
         Array.isArray(saved.solved) && saved.solved.includes(word.id) &&
         word.keys.every((key, index) => state.letters[key] === word.answer[index])
       ).map(word => word.id);
-      state.hints = words.filter(word => Array.isArray(saved.hints) && saved.hints.includes(word.id)).map(word => word.id);
-      // A hint grants only one letter per word, including after reload.
-      for (const id of state.hints) {
-        const word = words.find(item => item.id === id);
-        state.letters[word.keys[0]] = word.answer[0];
-      }
       if (words.some(word => word.id === saved.selected)) state.selected = saved.selected;
       if (['library', 'crossword', 'complete'].includes(saved.page)) state.page = saved.page;
       state.loveSeen = saved.loveSeen === true || state.solved.includes(8);
@@ -128,7 +131,7 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
   }
 
   function isLocked(key) {
-    return cells.get(key).words.some(word =>
+    return progress.hints.includes(key) || cells.get(key).words.some(word =>
       isSolved(word) || (progress.hints.includes(word.id) && word.keys[0] === key));
   }
 
@@ -285,8 +288,7 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
       input.readOnly = solved;
       input.maxLength = selected.answer.length + 12;
       check.disabled = solved;
-      hint.disabled = solved || progress.hints.includes(selected.id);
-      hint.textContent = progress.hints.includes(selected.id) ? 'Подсказка использована' : 'Подсказать одну букву';
+      hint.disabled = solved || selected.keys.every(isLocked);
       ready.hidden = !allSolved();
       for (const [key, control] of cellButtons) {
         const cell = cells.get(key);
@@ -364,13 +366,21 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
 
     function giveHint() {
       const word = selectedWord();
-      if (isSolved(word) || progress.hints.includes(word.id)) return;
-      progress.hints.push(word.id);
-      progress.letters[word.keys[0]] = word.answer[0];
+      if (isSolved(word)) return;
+      const available = word.keys.filter(key => !isLocked(key));
+      const key = available.find(key => letterAt(key) !== cells.get(key).answer) ?? available[0];
+      if (!key) return;
+      const letter = cells.get(key).answer;
+      progress.hints.push(key);
+      progress.letters[key] = letter;
       input.value = pattern(word);
       error = false;
       input.removeAttribute('aria-invalid');
-      feedback.textContent = 'Первая буква — ' + word.answer[0] + '. Остальное попробуй вспомнить сама.';
+      if (input.value === word.answer) {
+        submitAnswer();
+        return;
+      }
+      feedback.textContent = 'Открыта буква «' + letter + '» на позиции ' + (word.keys.indexOf(key) + 1) + '.';
       saveProgress();
       update();
     }

@@ -83,7 +83,7 @@
 
   // Local vector illustrations: no external assets, fonts or requests.
   function buildingArt(id) {
-    const windowArt = (x,y,w=22,h=27) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#a8c2bf" stroke="#fff5db" stroke-width="4"/><path d="M${x+w/2} ${y}v${h}" stroke="#fff5db" stroke-width="2"/>`;
+    const windowArt = (x,y,w=22,h=27) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#d7c39a" stroke="#fff5db" stroke-width="4"/><path d="M${x+w/2} ${y}v${h}M${x} ${y+h*.48}h${w}" stroke="#fff5db" stroke-width="2"/><path d="M${x+3} ${y+h-4}l${w-6} -${h*.35}" stroke="#fff3c9" stroke-width="2" opacity=".48"/>`;
     const door = (x,y,color='#8c9c82') => `<path d="M${x} 131V${y+11}a12 12 0 0 1 24 0v${131-y-11}Z" fill="${color}"/><circle cx="${x+18}" cy="119" r="1.5" fill="#fff1c9"/>`;
     const ground = '<ellipse cx="116" cy="145" rx="87" ry="11" fill="#849375" opacity=".2"/><path d="M25 132q85-13 170 0v11q-85 17-170 0Z" fill="#e3dbc4"/><path d="M28 143q82 14 164 0" fill="none" stroke="#c2bca1" stroke-width="2"/>';
     let art = '';
@@ -191,12 +191,14 @@
     });
     routes.setAttribute('viewBox',`0 0 ${town.clientWidth} ${town.clientHeight}`);
     routes.replaceChildren();
-    const left=12,right=town.clientWidth-12;
+    const left=16,right=town.clientWidth-16;
     const paths=[];
     for (let i=0;i<stops.length-1;i++) {
       const a=stops[i],b=stops[i+1];
       const side=i===1?right:left;
-      const points=i===1 || i===3?[a,{x:side,y:a.y},{x:side,y:b.y},b]:[a,b];
+      const points=i===1 || i===3
+        ? [a,{x:side,y:a.y},{x:side,y:b.y},b]
+        : [a,{x:(a.x+b.x)/2,y:Math.max(a.y,b.y)+10},b];
       const d=roundedRoute(points);
       routePath(d,'street-edge'); routePath(d,'street-fill');
       paths.push(routePath(d,'street-track'));
@@ -382,7 +384,7 @@
         panelBody.append(element('p','Эта дверь откроется после дела ' + previous.id + ' — «' + previous.locationName + '». Сначала найди предыдущий фрагмент: у этой истории свой порядок.'));
       } else {
         if (mission.id === '002' && status === 'current') {
-          panelBody.append(element('p','Один важный снимок рассыпался на двенадцать частей. Собери его — и воспоминание снова станет целым'));
+          panelBody.append(element('p','В Фотостудии сохранился орнамент из двенадцати частей. Собери его, чтобы открыть воспоминание.'));
         } else if (mission.id !== '002') {
           panelBody.append(element('p',mission.description));
         }
@@ -394,7 +396,7 @@
         if (mission.id === '001') {
           panelBody.append(panelButton(status === 'completed' ? 'Открыть письмо' : 'Войти в Дом воспоминаний',() => openPanel('letters'),true));
         } else if (mission.id === '002') {
-          panelBody.append(panelButton(status === 'completed' ? 'Открыть снимок из архива' : 'Восстановить фотографию',() => openPanel('photo'),true));
+          panelBody.append(panelButton(status === 'completed' ? 'Открыть снимок из архива' : 'Войти в Фотостудию',() => openPanel('photo'),true));
         } else if (mission.id === '003') {
           panelBody.append(panelButton(status === 'completed' ? 'Открыть улики из архива' : 'Войти в Детективное бюро',() => openPanel('objects'),true));
         } else if (mission.id === '004') {
@@ -426,7 +428,7 @@
       finale.open();
     } else if (kind === 'help') {
       panelTitle.textContent = 'Маленькая подсказка';
-      panelBody.append(element('p','Иди за Катей на карте: она стоит у текущего дела. Нажми на здание, чтобы прочитать его карточку. Следующая дверь откроется после предыдущей находки.'),element('p','Слова послания хранятся в журнале. Заглядывай туда, когда захочется собрать мысли вместе.'),element('div','Первое дело ждёт в Доме воспоминаний. Открой его карточку и войди в дом, чтобы начать расследование.','pending-note'));
+      panelBody.append(element('p','Иди за Катей на карте: она стоит у текущего дела. Нажми на здание, чтобы открыть дело. Следующая дверь откроется после предыдущей находки.'),element('p','Слова послания хранятся в журнале. Заглядывай туда, когда захочется собрать мысли вместе.'),element('div','Первое дело ждёт в Доме воспоминаний. Открой его карточку и войди в дом, чтобы начать расследование.','pending-note'));
     } else {
       panelTitle.textContent = 'Дело особой важности';
       panelBody.append(element('p','Катя, в этом городке знакомые места умеют хранить секреты. Здесь не нужно торопиться: замечай детали, собирай слова и доверяй своим воспоминаниям.'));
@@ -486,12 +488,18 @@
     saveState();
     showMap();
   });
+  function openLocation(id) {
+    const mission = MISSIONS.find(item => item.id === id);
+    if (!mission) return;
+    if (mission.id === '003' && statusOf(mission) !== 'locked') openPanel('objects');
+    else openPanel('case', id);
+  }
   $('#mission-map').addEventListener('click',event => {
     const button = event.target.closest('[data-mission]');
-    if (button) openPanel('case',button.dataset.mission);
+    if (button) openLocation(button.dataset.mission);
   });
   document.querySelectorAll('[data-panel]').forEach(button => button.addEventListener('click',() => openPanel(button.dataset.panel)));
-  $('#current-case').addEventListener('click',() => nextMission() ? openPanel('case',nextMission().id) : openPanel('final'));
+  $('#current-case').addEventListener('click',() => nextMission() ? openLocation(nextMission().id) : openPanel('final'));
   $('#nav-map').addEventListener('click',() => {
     if (panel.open) panel.close();
     showMap();

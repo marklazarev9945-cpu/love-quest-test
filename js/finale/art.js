@@ -32,8 +32,8 @@ const FINALE_ENDING_ART = `
   <!-- Mark waits inside the room. -->
   <g class="finale-mark">
     <ellipse cx="360" cy="321" rx="28" ry="6" fill="#7a785f" opacity=".22"/>
-    <path d="m348 275-3 42m25-42 4 42" stroke="#d4c9b6" stroke-width="13" stroke-linecap="round"/>
-    <path d="m350 286-2 26m24-26 3 26" stroke="#e5dac5" stroke-width="2" stroke-linecap="round"/>
+    <path d="m348 275-3 42m25-42 4 42" stroke="#5c5350" stroke-width="13" stroke-linecap="round"/>
+    <path d="m350 286-2 26m24-26 3 26" stroke="#807069" stroke-width="2" stroke-linecap="round"/>
     <path d="M339 320h15m15 0h14" stroke="#f1e6d3" stroke-width="7" stroke-linecap="round"/>
     <path d="m342 238-12 27m48-27 12 24" stroke="#d9cdbb" stroke-width="11" stroke-linecap="round"/>
     <path d="M330 269h.1m60-3h.1" stroke="#eac09f" stroke-width="9" stroke-linecap="round"/>

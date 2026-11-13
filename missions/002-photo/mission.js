@@ -3,6 +3,7 @@
 function createPhotoMission({panel, body, title, kicker, closeButton, element, button, isCompleted, archive}) {
   const storageKey = 'lovequest.chapter04.photo.v1';
   const photoSource = 'assets/mission-002/proposal.jpg';
+  const ornamentSource = 'assets/mission-002/ornament.svg';
   const photoWidth = 1046;
   const photoHeight = 1800;
   const columns = 3;
@@ -72,7 +73,16 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
     return image;
   }
 
-  function showPreview(restore) {
+  function makeOrnament() {
+    const image = element('img', undefined, 'studio-photo');
+    image.alt = 'Орнамент с розой, листьями и лентами';
+    image.width = 600;
+    image.height = 720;
+    image.src = ornamentSource;
+    return image;
+  }
+
+  function showPreview(restore, ornament) {
     const previousScroll = panel.scrollTop;
     returnFromPreview = () => {
       restore();
@@ -81,12 +91,12 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
     };
     panel.classList.add('photo-preview');
     closeButton.setAttribute('aria-label', 'Закрыть просмотр снимка');
-    setScreen('Оригинал фотографии');
+    setScreen(ornament ? 'Цельный орнамент' : 'Оригинал фотографии');
     const viewport = element('div', undefined, 'studio-viewport');
     viewport.tabIndex = 0;
     viewport.setAttribute('role', 'region');
-    viewport.setAttribute('aria-label', 'Просмотр фотографии');
-    viewport.append(makePhoto());
+    viewport.setAttribute('aria-label', ornament ? 'Просмотр орнамента' : 'Просмотр фотографии');
+    viewport.append(ornament ? makeOrnament() : makePhoto());
     const zoom = button('Увеличить', () => {
       const expanded = viewport.classList.toggle('is-expanded');
       zoom.textContent = expanded ? 'Показать целиком' : 'Увеличить';
@@ -105,8 +115,8 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
     return true;
   }
 
-  function previewButton(label, restore) {
-    const control = button(label, () => showPreview(restore));
+  function previewButton(label, restore, ornament = false) {
+    const control = button(label, () => showPreview(restore, ornament));
     control.classList.add('studio-open-preview');
     return control;
   }
@@ -122,7 +132,7 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
     const board = element('div', undefined, 'studio-board');
     board.setAttribute('role', 'group');
     board.setAttribute('aria-label', 'Пазл: 3 столбца и 4 строки');
-    board.style.aspectRatio = `${photoWidth} / ${photoHeight}`;
+    board.style.aspectRatio = '5 / 6';
     const tiles = order.map((_, position) => {
       const tile = button('', () => choose(position));
       tile.className = 'studio-tile';
@@ -158,7 +168,7 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
     }
 
     const hint = element('details', undefined, 'studio-note');
-    hint.append(element('summary', 'Подсказка'), element('p', 'Сначала найди края и ориентиры на фоне. Если сложно — посмотри оригинал'));
+    hint.append(element('summary', 'Подсказка'), element('p', 'Сначала найди края и ориентиры на фоне. Если сложно — посмотри цельный орнамент'));
     const confirmation = element('div', undefined, 'studio-note');
     confirmation.hidden = true;
     const shuffleButton = button('Перемешать заново', () => {
@@ -174,7 +184,7 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
       showPuzzle();
     }, true));
     const actions = element('div', undefined, 'studio-actions');
-    actions.append(previewButton('Посмотреть оригинал', showPuzzle), shuffleButton, backToMap());
+    actions.append(previewButton('Посмотреть орнамент', showPuzzle, true), shuffleButton, backToMap());
     body.append(element('p', 'Нажми на два фрагмента, чтобы поменять их местами'), count, board, actions, confirmation, hint);
     updateBoard();
   }
@@ -194,19 +204,31 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
       actions.append(saveButton);
     }
     actions.append(backToMap());
-    figure.append(makePhoto(() => { if (saveButton) saveButton.disabled = false; }), element('figcaption', caption));
+    const picture = element('div', undefined, 'studio-picture');
+    picture.append(makePhoto(() => {
+      picture.classList.add('is-loaded');
+      if (saveButton) saveButton.disabled = false;
+    }));
+    if (justSolved) {
+      const ornament = makeOrnament();
+      ornament.classList.add('studio-merging');
+      ornament.alt = '';
+      picture.append(ornament);
+    }
+    figure.append(picture, element('figcaption', caption));
     body.append(figure, element('p', 'Некоторые мгновения хочется собрать по кусочкам, чтобы снова увидеть их целиком.'), actions);
   }
 
   return {
     open() {
-      if (isCompleted()) {
-        showReveal();
-        return;
-      }
-      if (!order) shuffle();
-      if (correctCount() === tileCount) showReveal();
-      else showPuzzle();
+      setScreen('Фотостудия');
+      polishInterior({body, element, button}, 'studio', () => {
+        if (isCompleted()) return showReveal();
+        if (!order) shuffle();
+        if (correctCount() === tileCount) showReveal();
+        else showPuzzle();
+      });
+      body.append(backToMap());
     },
     closePreview,
     clearView,

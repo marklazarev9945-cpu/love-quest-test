@@ -35,7 +35,6 @@ function createLettersMission({panel, body, title, kicker, closeButton, element,
   ];
 
   let answered = readProgress();
-  let started = answered > 0;
   let zoomReturn = null;
 
   function readProgress() {
@@ -124,12 +123,11 @@ function createLettersMission({panel, body, title, kicker, closeButton, element,
 
   function showIntro() {
     setScreen('Дело о потерянных письмах');
-    const actions = element('div', undefined, 'letter-actions');
-    actions.append(photoButton('Рассмотреть открытку', false, showIntro), button('Начать расследование письма', () => {
-      started = true;
-      showQuestion();
-    }, true));
-    body.append(element('p', 'В доме нашлось письмо, которое так и не дошло до адресата. Но его история ещё помнит несколько важных деталей'), photo(false), actions, backToMap());
+    polishInterior({body, element, button}, 'letters', () => {
+      if (answered === questions.length) showReveal();
+      else showQuestion();
+    });
+    body.append(backToMap());
   }
 
   function showQuestion() {
@@ -152,7 +150,7 @@ function createLettersMission({panel, body, title, kicker, closeButton, element,
     const hint = element('details', undefined, 'letter-hint');
     hint.append(element('summary', 'Подсказка'), element('p', question.hint));
     body.append(options, feedback, hint);
-    if (index === 0) body.append(photoButton('Рассмотреть открытку', false, showQuestion));
+    if (index === 0) body.prepend(photo(false), photoButton('Рассмотреть открытку', false, showQuestion));
     body.append(backToMap());
   }
 
@@ -183,15 +181,12 @@ function createLettersMission({panel, body, title, kicker, closeButton, element,
 
   return {
     open() {
-      if (answered === questions.length) showReveal();
-      else if (started) showQuestion();
-      else showIntro();
+      showIntro();
     },
     closeZoom,
     clearView,
     reset() {
       answered = 0;
-      started = false;
       saveProgress();
     }
   };

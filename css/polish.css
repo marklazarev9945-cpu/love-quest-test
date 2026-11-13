@@ -1,0 +1,167 @@
+.town {
+  border-radius: 56px 56px 24px 24px;
+  background:
+    radial-gradient(ellipse at 16% 15%, #f8efd2 0, transparent 29%),
+    radial-gradient(ellipse at 65% 41%, #ecedce 0, transparent 39%),
+    radial-gradient(ellipse at 33% 76%, #eae8c6 0, transparent 34%),
+    linear-gradient(155deg, #e0e8ce, #d2dfbe 62%, #bdcda9);
+}
+.town::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 5px #f8f4d243;
+  pointer-events: none;
+}
+.mission-map {
+  grid-template-rows: repeat(3, 232px);
+  padding: 30px 23px 44px;
+  column-gap: clamp(42px, 10%, 120px);
+}
+.location { min-height: 0; padding: 6px 0 0; }
+.location:nth-child(3n + 2) { margin-top: 11px; }
+.location .building {
+  height: auto;
+  width: min(100%, 182px);
+  aspect-ratio: 220 / 160;
+}
+.location:hover .building { transform: none; }
+.location:not(.locked):is(:hover, :focus-visible, :active) .building {
+  filter: saturate(1.16) drop-shadow(2px 6px 3px #52664b46);
+}
+.location.locked .building { filter: saturate(.38) drop-shadow(2px 4px 2px #56654c20); opacity: .72; }
+.location.completed .building { filter: saturate(1) drop-shadow(2px 4px 2px #56654c35); }
+.location-name { min-height: 35px; margin-top: 23px; }
+.location-number { top: 0; }
+.location-status { margin-top: 3px; }
+.location.current::before {
+  inset: auto auto 59px 50%;
+  width: min(82%, 150px);
+  transform: translateX(-50%);
+  height: 21px;
+}
+.street-edge { stroke: #a6a988; stroke-width: 21; opacity: .43; }
+.street-fill { stroke: #f1e2bf; stroke-width: 17; }
+.street-track { stroke: #bc9d78; stroke-dasharray: 1 6; }
+.entry-path { stroke: #dbc59e; }
+.town-life .resident-reader { left: calc(50% - 24px); top: 37%; }
+.town-life .resident-florist { left: calc(50% + 10px); top: 40%; }
+.town-life .resident-photographer { left: calc(50% + 4px); top: 11%; }
+.town-life .bench-scene { left: 50%; top: 68%; transform: translateX(-50%); width: 45px; }
+.polish-coffee { left: calc(50% - 20px); bottom: 12%; }
+.polish-cup { transform-origin: 19px 31px; animation: polish-sip 14s -6s infinite; }
+.katya-face { transform-origin: 20px 31px; }
+#town-katya[data-state="standing"] .katya-face { animation: polish-look 12s -5s infinite; }
+.town-pets { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.polish-pet {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 48px;
+  border-radius: 14px;
+  padding: 1px;
+  background: transparent;
+  pointer-events: auto;
+}
+.town-pets .polish-cat { top: 20%; left: calc(50% - 26px); }
+.town-pets .polish-dog { bottom: 7px; left: calc(50% - 26px); }
+.polish-pet svg { width: 100%; overflow: visible; }
+.polish-pet span {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  opacity: 0;
+  color: #a85757;
+  text-shadow: 0 0 3px #fff1d7;
+}
+.polish-pet.is-reacting span { opacity: 1; animation: polish-heart .8s ease-out both; }
+.pet-tail { transform-origin: 55px 36px; }
+.polish-pet.is-reacting .pet-tail { animation: polish-wag .18s ease-in-out 4 alternate; }
+.polish-cat.is-reacting .pet-eyes { transform-origin: 30px 27px; animation: polish-blink .45s ease; }
+.polish-dog svg { animation: polish-dog-step 16s -5s ease-in-out infinite; }
+.pet-snout { transform-origin: 25px 29px; animation: polish-sniff 8s -3s infinite; }
+.polish-dog.is-reacting .pet-snout { animation: polish-sniff .55s ease; }
+.polish-room { position: relative; margin: 0 0 14px; overflow: hidden; border-radius: 14px; background: #e8d5bc; }
+.polish-room > img { display: block; width: 100%; height: auto; }
+.polish-room-target {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  width: max(80px, 18%);
+  min-height: 52px;
+  padding: 2px 4px;
+  background: transparent;
+  border-radius: 10px;
+  transform: translate(-50%, -38%);
+}
+.polish-room-target svg {
+  width: clamp(43px, 12vw, 76px);
+  filter: drop-shadow(1px 3px 2px #5943354d);
+  animation: polish-invite 5s 1.6s ease-in-out infinite;
+}
+.polish-room-target span {
+  border-radius: 5px;
+  background: #fff4dce8;
+  color: #594639;
+  font-size: clamp(10px, 2.7vw, 13px);
+  padding: 2px 5px;
+  font-weight: 650;
+}
+.polish-room-target:is(:hover, :focus-visible, :active) svg { filter: drop-shadow(0 0 6px #fff1a1); }
+.polish-room-letters .polish-room-target { left: 55%; top: 63%; }
+.polish-room-studio .polish-room-target { left: 84%; top: 58%; }
+.polish-room-letters .polish-cat { bottom: 11%; left: 25%; }
+.library-desk, .archive-box { animation: polish-invite 5s 1.6s ease-in-out infinite; }
+.archive-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 72% 25%, #ffe6ab44, transparent 42%);
+  pointer-events: none;
+}
+.studio-picture { position: relative; margin-inline: auto; width: min(100%, 320px); }
+.studio-picture .studio-merging {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: contain;
+  background: #f4e6c6;
+  pointer-events: none;
+  animation: none;
+}
+.studio-picture.is-loaded .studio-merging { animation: polish-merge .82s ease-in-out both; }
+.objects-clue:not(.is-hinted) svg { filter: drop-shadow(1px 2px 1px #634c3545); }
+
+@keyframes polish-look { 0%, 40%, 72%, 100% { transform: rotate(0); } 51%, 62% { transform: rotate(-5deg); } }
+@keyframes polish-sip { 0%, 35%, 62%, 100% { transform: rotate(0); } 45%, 54% { transform: rotate(-39deg); } }
+@keyframes polish-heart { to { opacity: 0; transform: translateY(-9px); } }
+@keyframes polish-wag { to { transform: rotate(-26deg); } }
+@keyframes polish-blink { 50% { transform: scaleY(.1); } }
+@keyframes polish-dog-step { 0%, 18%, 100% { transform: translateX(0); } 42%, 76% { transform: translateX(-6px); } }
+@keyframes polish-sniff { 24%, 56% { transform: rotate(-13deg); } 40% { transform: rotate(-6deg); } }
+@keyframes polish-invite {
+  0%, 38%, 100% { filter: drop-shadow(0 0 0 #fff1a100); }
+  16% { filter: drop-shadow(0 0 7px #fff1a1); }
+}
+@keyframes polish-merge { 0%, 27% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+
+@media (max-width: 680px) {
+  .town { border-radius: 43px 43px 20px 20px; }
+  .mission-map { grid-template-rows: repeat(3, 208px); padding: 26px 14px 32px; column-gap: 44px; }
+  .location .building { width: min(100%, 155px); }
+  .location-name { font-size: 16px; }
+  .town-pets .polish-pet { width: 44px; left: calc(50% - 22px); }
+}
+@media (max-width: 350px) {
+  .mission-map { grid-template-rows: repeat(3, 180px); }
+  .location-name { font-size: 15px; min-height: 32px; }
+  .polish-room-letters .polish-cat { bottom: 4%; left: 20%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .polish-pet *, .polish-cup, #town-katya[data-state="standing"] .katya-face,
+  .polish-room-target svg, .library-desk, .archive-box { animation: none !important; }
+  .studio-picture .studio-merging { display: none; }
+}

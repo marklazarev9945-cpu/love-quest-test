@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f9ecd5"/><stop offset="1" stop-color="#dfc5a6"/></linearGradient>
+    <linearGradient id="glass" x2="0" y2="1"><stop stop-color="#b7d1ce"/><stop offset="1" stop-color="#f9e7b7"/></linearGradient>
+    <pattern id="paper" width="28" height="34" patternUnits="userSpaceOnUse"><path d="M14 9v5m-2-3h4" stroke="#b48e75" opacity=".3"/></pattern>
+  </defs>
+  <path d="M0 0h640v282H0z" fill="url(#wall)"/><path d="M0 0h640v282H0z" fill="url(#paper)"/>
+  <path d="M0 277h640v123H0z" fill="#c8a387"/><path d="M0 277h640v9H0z" fill="#9a7b65"/>
+  <path d="M0 320h640M0 363h640M140 286 60 400m190-114-42 114m144-114 30 114m72-114 81 114" fill="none" stroke="#a68169" opacity=".55"/>
+  <path d="M62 221V96a78 78 0 0 1 156 0v125Z" fill="url(#glass)" stroke="#a78368" stroke-width="9"/>
+  <path d="M67 172q40-38 77-12t69-15v71H67Z" fill="#9caf8c"/><path d="M67 193q35-28 73-12t73 1v34H67Z" fill="#809b7b"/>
+  <circle cx="164" cy="91" r="23" fill="#fff0bc"/><path d="M140 23v199M67 128h146M54 222h173" fill="none" stroke="#b59376" stroke-width="8" stroke-linecap="round"/>
+  <path d="M64 52q-8 116 6 158H28Q51 130 40 56m174-4q8 116-6 158h42Q227 130 238 56" fill="#bd897d" opacity=".8"/>
+  <rect x="401" y="40" width="174" height="131" rx="8" fill="#ae866d"/><path d="M411 52h154v104H411z" fill="#8b705d"/>
+  <path d="M411 104h154" stroke="#ceaa8b" stroke-width="7"/><path d="M422 101V69h13v32m6 0V61h13v40m4 0 6-34 13 2-5 32m-43 51v-33h12v33m8 0v-29h15v29" fill="#9aa98b" stroke="#6d735f" stroke-width="2"/>
+  <path d="M511 101V62h40v39Zm-14 51v-32h51v32Z" fill="#eed9b7" stroke="#bc9575" stroke-width="4"/><path d="m513 95 11-16 10 8 7-4 8 12m-46 53 13-12 10 7 9-7 9 12" fill="#819b86"/>
+  <ellipse cx="346" cy="360" rx="211" ry="33" fill="#a2aa88"/><ellipse cx="346" cy="360" rx="193" ry="25" fill="none" stroke="#e8dfb7" stroke-dasharray="2 7" stroke-width="3"/>
+  <path d="M238 277h232l-13 26H252Zm20 20h15v64h-15zm179 0h15v64h-15z" fill="#9d7459"/>
+  <path d="m224 268 43-36h171l45 36-10 16H234Z" fill="#bf9270" stroke="#996d54" stroke-width="3"/><path d="m232 268 40-31h162l39 31Z" fill="#e1bb93"/>
+  <path d="m293 249 20-10 31 13-27 12z" fill="#f2dfbb"/><path d="m390 260 26-15m-23 16 26-15" stroke="#876c61" stroke-linecap="round"/>
+  <path d="M430 243q-7-34 10-44" fill="none" stroke="#8a745d" stroke-width="5"/><path d="M432 196q14-26 35-9l-12 15z" fill="#869a83"/><ellipse cx="431" cy="245" rx="13" ry="4" fill="#a38264"/>
+  <path d="M77 326h63l-8 38H86z" fill="#ae826b"/><path d="M108 327q-30-13-26-46 24 10 28 40 1-30 30-43-1 28-28 47" fill="#849a7b"/>
+</svg>
