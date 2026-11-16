@@ -242,6 +242,7 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
       button('Открыть собранную страницу', showComplete, true));
 
     const scroll = element('div', undefined, 'library-grid-scroll');
+    scroll.tabIndex = -1;
     scroll.setAttribute('role', 'region');
     scroll.setAttribute('aria-label', 'Сетка кроссворда. Для выбора с клавиатуры также доступны вопросы под сеткой.');
     const grid = element('div', undefined, 'library-grid');
@@ -432,8 +433,16 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
     }
     const navigation = element('div', undefined, 'library-actions');
     navigation.append(button('Вернуться в библиотеку', showLibrary), backToMap());
-    body.append(counter, form, ready, element('p', 'Введи ответ целиком. Точки обозначают пустые клетки. Выбери вопрос ниже или коснись слова в сетке. На пересечении повторное касание меняет направление. На узком экране сетку можно прокрутить вбок.', 'library-note'),
-      scroll, questions, navigation);
+    const guide = element('details', undefined, 'library-guide');
+    guide.append(element('summary', 'Как пользоваться кроссвордом'),
+      element('p', 'Вводи слово целиком. Точки обозначают пустые клетки. Выбери вопрос или коснись слова в сетке. Повторное касание на пересечении меняет направление. Сетку можно прокручивать вбок.'));
+    const gridLink = button('К сетке', () => {
+      input.blur();
+      scroll.focus({preventScroll: true});
+      scroll.scrollIntoView({block: 'start'});
+    });
+    gridLink.classList.add('library-grid-link');
+    body.append(counter, form, ready, gridLink, guide, scroll, questions, navigation);
     chooseWord(selectedWord(), false);
   }
 

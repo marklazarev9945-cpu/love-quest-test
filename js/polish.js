@@ -7,7 +7,7 @@ const polishPets = {
   },
   dog: {
     label: 'Поздороваться с таксой',
-    art: '<ellipse cx="37" cy="47" rx="32" ry="4" fill="#7a846829"/><path class="pet-tail" d="M56 32q14-3 12-14 5 5 1 13l-10 7" fill="#9a5d43"/><path d="m27 36-3 8h8l4-8m12-1 2 9h7l-2-12" fill="#87503a"/><path d="M15 28q10-8 25-4 11-3 19 2l2 10q-12 6-29 1l-10 2Z" fill="#ba794f"/><g class="pet-snout"><path d="M17 19q12-3 15 10l-8 9-12-4-9-4 2-5 9-1Z" fill="#c98c60"/><path d="M20 20q13-2 10 12l-4 7-7-5q-2-8 1-14Z" fill="#8c533b"/><path d="M22 24v8m4-7-1 9" stroke="#ac6d4c" fill="none"/><circle cx="6" cy="28" r="3" fill="#523a31"/><circle cx="16" cy="25" r="1.6" fill="#49392d"/></g>'
+    art: '<ellipse cx="37" cy="47" rx="32" ry="4" fill="#7a846829"/><path class="pet-tail" d="M56 32q9-3 12-15l3 2-1 4 4-2-3 8-7 6-5 3" fill="#9a5d43"/><path class="pet-step pet-step-front" d="m27 35-3 9h8l4-9" fill="#87503a"/><path class="pet-step pet-step-back" d="m48 35 2 9h7l-2-12" fill="#87503a"/><path d="M15 28q10-8 25-4 11-3 19 2l2 10q-12 6-29 1l-10 2Z" fill="#ba794f"/><g class="pet-snout"><path d="M17 19q12-3 15 10l-8 9-12-4-9-4 2-5 9-1Z" fill="#c98c60"/><path d="M20 20q13-2 10 12l-2 5-1-1-2 6-2-3-2 2-2-7q-2-8 1-14Z" fill="#8c533b"/><path d="M22 24v11m4-10-1 12" stroke="#ac6d4c" fill="none"/><circle cx="6" cy="28" r="3" fill="#523a31"/><circle cx="16" cy="25" r="1.6" fill="#49392d"/></g>'
   }
 };
 

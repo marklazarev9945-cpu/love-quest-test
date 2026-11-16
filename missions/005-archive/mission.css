@@ -265,16 +265,23 @@ dialog.archive-panel {
   to { transform: translate(9px, -12px); opacity: .2; }
 }
 
+dialog.archive-panel.archive-preview {
+  width: min(720px, calc(100% - 12px));
+}
+.archive-preview .panel-content { padding-inline: clamp(9px, 3vw, 22px); }
+.archive-photo-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.archive-photo-actions .button { padding-inline: 12px; }
+.archive-preview-viewport { margin: 8px 0; max-height: 70vh; max-height: 70dvh; }
+.archive-preview-viewport:not(.is-expanded) .archive-photo {
+  width: auto;
+  max-width: 100%;
+  max-height: 70vh;
+  max-height: 70dvh;
+  margin-inline: auto;
+}
 @media (max-width: 360px) {
-  .archive-board { grid-template-columns: minmax(0, 1fr); }
-  .archive-select {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-align: left;
-  }
-  .archive-select .archive-photo { width: 48%; }
-  .archive-select-label { flex: 1; }
+  .archive-board { gap: 8px; }
+  .archive-card { padding: 5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

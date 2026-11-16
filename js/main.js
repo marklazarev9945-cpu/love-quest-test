@@ -83,7 +83,7 @@
 
   // Local vector illustrations: no external assets, fonts or requests.
   function buildingArt(id) {
-    const windowArt = (x,y,w=22,h=27) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#d7c39a" stroke="#fff5db" stroke-width="4"/><path d="M${x+w/2} ${y}v${h}M${x} ${y+h*.48}h${w}" stroke="#fff5db" stroke-width="2"/><path d="M${x+3} ${y+h-4}l${w-6} -${h*.35}" stroke="#fff3c9" stroke-width="2" opacity=".48"/>`;
+    const windowArt = (x,y,w=22,h=27) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" class="town-window ${x<100 ? 'sunlit' : 'shaded'}" fill="${x<100 ? '#ebc987' : '#a9b8af'}" stroke="#fff5db" stroke-width="4"/><path d="M${x+w/2} ${y}v${h}M${x} ${y+h*.48}h${w}" stroke="#fff5db" stroke-width="2"/><path d="M${x+3} ${y+h-4}l${w-6} -${h*.35}" stroke="#fff3c9" stroke-width="2" opacity=".48"/>`;
     const door = (x,y,color='#8c9c82') => `<path d="M${x} 131V${y+11}a12 12 0 0 1 24 0v${131-y-11}Z" fill="${color}"/><circle cx="${x+18}" cy="119" r="1.5" fill="#fff1c9"/>`;
     const ground = '<ellipse cx="116" cy="145" rx="87" ry="11" fill="#849375" opacity=".2"/><path d="M25 132q85-13 170 0v11q-85 17-170 0Z" fill="#e3dbc4"/><path d="M28 143q82 14 164 0" fill="none" stroke="#c2bca1" stroke-width="2"/>';
     let art = '';
@@ -106,7 +106,8 @@
     const steps = id === '006' ? '<path d="M94 147h33" stroke="#cabf9e" stroke-width="3" stroke-linecap="round"/>' : '<path d="M94 136h32v5H94Zm-4 5h40v5H90Zm-4 5h48v5H86Z" fill="#d9cbae"/><path d="M94 140h32m-36 5h40m-44 5h48" stroke="#b9ac90" stroke-width="1.5"/>';
     const extras = id === '001' ? '<rect x="51" y="112" width="32" height="6" rx="2" fill="#b18e75"/><path d="M56 111v-8m10 8v-5m10 5v-8" stroke="#8ca180" stroke-width="2"/><g fill="#c99787"><circle cx="56" cy="103" r="3"/><circle cx="66" cy="106" r="3"/><circle cx="76" cy="103" r="3"/></g>' : id === '002' ? '<path d="M53 84h66l-5 9H58Z" fill="#f7e9cf"/><path d="M65 84v8m17-8v8m17-8v8" stroke="#b4939b" stroke-width="5"/>' : id === '004' ? '<path d="M17 126h23m-21 5h19m-17 0v6m14-6v6" stroke="#a99475" stroke-width="3" stroke-linecap="round"/>' : '';
     const smoke = id === '001' ? '<g class="chimney-smoke"><ellipse class="smoke-puff puff-one" cx="158" cy="25" rx="4" ry="3" fill="#a5a798"/><ellipse class="smoke-puff puff-two" cx="158" cy="25" rx="4" ry="3" fill="#a5a798"/></g>' : '';
-    return `<svg class="building" viewBox="0 0 220 160" aria-hidden="true" focusable="false">${ground}${depth}${art}${detail}${steps}${extras}${smoke}</svg>`;
+    const photoGlow = id === '002' ? '<rect class="studio-flash" x="53" y="56" width="112" height="65" rx="18" fill="#fff0c0"/>' : '';
+    return `<svg class="building" viewBox="0 0 220 160" aria-hidden="true" focusable="false">${ground}${depth}${art}${detail}${steps}${extras}${smoke}${photoGlow}</svg>`;
   }
   function roundedRoute(points) {
     let d = `M${points[0].x} ${points[0].y}`;

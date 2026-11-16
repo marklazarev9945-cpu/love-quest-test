@@ -156,7 +156,9 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
       zoom.textContent = expanded ? 'Показать целиком' : 'Увеличить';
       if (!expanded) viewport.scrollTo(0, 0);
     });
-    body.append(zoom, viewport, button('Вернуться к фотографиям', closePreview), backToMap());
+    const actions = element('div', undefined, 'archive-photo-actions');
+    actions.append(button('Закрыть снимок', closePreview, true), zoom);
+    body.append(actions, viewport);
   }
 
   function closePreview() {
@@ -239,7 +241,7 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
 
     const hintText = element('p', undefined, 'archive-hint');
     hintText.hidden = !progress.hintUsed;
-    hintText.textContent = 'Начни с воспоминания, которое было ещё до осени 2025 года.';
+    hintText.textContent = 'Открой «Рассмотреть» у двух снимков, которые трудно сравнить. Обрати внимание на место, одежду, сезон и на то, что видно вокруг. Какие события ты вспоминаешь по этим деталям?';
     const hint = button(progress.hintUsed ? 'Подсказка открыта' : 'Нужна помощь?', () => {
       progress.hintUsed = true;
       hintText.hidden = false;

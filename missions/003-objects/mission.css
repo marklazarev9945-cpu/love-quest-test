@@ -145,3 +145,9 @@ dialog.objects-panel {
   .objects-clue { transition: none; }
   .objects-story { animation: none; }
 }
+
+.objects-clue[data-object="book"] svg { width: 75%; }
+.objects-clue[data-covered="true"]:is(:hover, :focus-visible, :active) { background: #fff3d02a; }
+@media (prefers-reduced-motion: no-preference) {
+  .objects-clue.is-uncovered svg { animation: objects-story-in .2s ease-out; }
+}

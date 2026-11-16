@@ -75,6 +75,10 @@
   <ellipse cx="207" cy="237" rx="17" ry="4" fill="#a28b65"/>
   <path d="M221 184q19-15 31 6l-30 13z" fill="#9aa88a" stroke="#72826c" stroke-width="2"/>
   <path d="m224 201 26-10 19 44-50 8z" fill="#fff1b1" opacity=".25"/>
+  <path d="M47 244h31v5H47zm1-6h28v6H48z" fill="#a9967b" stroke="#8b7159"/>
+  <path d="M321 142v-23h7v23m34 0v-27h9v27" fill="#929c84" stroke="#705c4d"/>
+  <path d="M308 134h11m42-10h12" stroke="#dfc39d" stroke-width="2"/>
+  <path d="m169 284 12 1 5 18-13 1z" fill="#ead7b6" stroke="#a98970"/>
   <!-- Upholstered chair in front -->
   <ellipse cx="112" cy="385" rx="58" ry="10" fill="#5f6956" opacity=".16"/>
   <path d="m72 367 3 19m72-19-4 19" stroke="#82694e" stroke-width="6" stroke-linecap="round"/>

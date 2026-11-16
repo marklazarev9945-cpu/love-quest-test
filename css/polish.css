@@ -165,3 +165,64 @@
   .polish-room-target svg, .library-desk, .archive-box { animation: none !important; }
   .studio-picture .studio-merging { display: none; }
 }
+
+/* Golden-hour light and small scenes live on the existing town map. */
+.town {
+  background:
+    radial-gradient(ellipse at 13% 9%, #fbefc9 0, transparent 49%),
+    radial-gradient(ellipse at 76% 59%, #ecedce 0, transparent 44%),
+    linear-gradient(155deg, #e7ead2, #d5dfbd 58%, #bdcda9);
+}
+.town-landscape { overflow: hidden; }
+.town .location:not(.locked) .sunlit { animation: town-window-warmth 16s -4s ease-in-out infinite; }
+.studio-flash { opacity: 0; pointer-events: none; }
+.town [data-mission="002"]:not(.locked) .studio-flash { animation: town-photo-light 12s -3s ease-in-out infinite; }
+.town-life .polish-coffee { left: calc(50% - 44px); top: 11%; bottom: auto; width: 29px; height: 53px; }
+.polish-cup { transform-box: view-box; transform-origin: 18px 27px; animation: town-coffee 10s -1.5s ease-in-out infinite; }
+.town-life .resident-photographer { left: calc(50% + 5px); top: 12%; width: 29px; height: 53px; }
+.camera-hand { animation: town-camera 12s -3s ease-in-out infinite; }
+.town-life .bench-scene { top: 43%; width: 54px; }
+.bench-gesture { transform-box: view-box; transform-origin: 32px 28px; animation: town-gesture 11s -2s ease-in-out infinite; }
+.bench-scene [data-npc="bench-right"] .npc-head { animation: town-nod 11s -2s ease-in-out infinite; }
+.town-life .resident-reader { top: 33%; }
+.town-life .resident-florist { top: 63%; }
+.town .resident-walker { animation: town-stroll 18s -4s ease-in-out infinite; }
+.town .npc-walk-legs { animation: town-stride 18s -4s ease-in-out infinite; }
+.town-pets .polish-cat { top: 23%; }
+.town-pets .polish-dog svg { animation: town-dog-walk 10s -2s ease-in-out infinite; }
+.polish-dog .pet-step { transform-box: fill-box; transform-origin: center top; animation: town-dog-steps 10s -2s ease-in-out infinite; }
+.polish-dog .pet-step-back { animation-direction: reverse; }
+.polish-dog:not(.is-reacting) .pet-tail { animation: town-tail 10s -2s ease-in-out infinite; }
+
+@keyframes town-window-warmth { 0%, 22%, 70%, 100% { fill: #ebc987; } 40%, 56% { fill: #ffe39f; } }
+@keyframes town-photo-light { 0%, 34%, 48%, 100% { opacity: 0; } 39%, 42% { opacity: .34; } }
+@keyframes town-coffee { 0%, 18%, 57%, 100% { transform: rotate(0); } 29%, 45% { transform: rotate(-74deg); } }
+@keyframes town-camera { 0%, 23%, 57%, 100% { transform: translateY(0); } 33%, 46% { transform: translateY(-10px); } }
+@keyframes town-gesture { 0%, 12%, 45%, 100% { transform: rotate(0); } 22%, 38% { transform: rotate(-82deg); } 30% { transform: rotate(-52deg); } }
+@keyframes town-nod { 0%, 32%, 60%, 100% { transform: rotate(0); } 42%, 54% { transform: rotate(13deg); } 48% { transform: rotate(4deg); } }
+@keyframes town-stroll { 0%, 16%, 100% { transform: translateY(0); } 40%, 70% { transform: translateY(22px); } }
+@keyframes town-stride {
+  0%, 16%, 40%, 70%, 94%, 100% { transform: skewX(0); }
+  20%, 30%, 74%, 84% { transform: skewX(-12deg); }
+  25%, 35%, 79%, 89% { transform: skewX(12deg); }
+}
+@keyframes town-dog-walk { 0%, 15%, 100% { transform: translateX(-4px); } 34%, 72% { transform: translateX(6px); } }
+@keyframes town-dog-steps {
+  0%, 15%, 34%, 66%, 85%, 100% { transform: rotate(0); }
+  18%, 28%, 70%, 80% { transform: rotate(18deg); }
+  23%, 33%, 75%, 84% { transform: rotate(-15deg); }
+}
+@keyframes town-tail {
+  0%, 34%, 65%, 100% { transform: rotate(0); }
+  39%, 49%, 59% { transform: rotate(-20deg); }
+  44%, 54% { transform: rotate(14deg); }
+}
+@media (max-width: 680px) {
+  .town-life .polish-coffee { left: calc(50% - 28px); width: 24px; height: 44px; top: 10%; }
+  .town-life .resident-photographer { left: calc(50% + 3px); width: 24px; height: 44px; top: 15%; }
+  .town-life .bench-scene { width: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .town .location .sunlit, .town [data-mission] .studio-flash, .bench-gesture,
+  .bench-scene [data-npc] .npc-head, .town-pets .polish-dog svg { animation: none !important; }
+}

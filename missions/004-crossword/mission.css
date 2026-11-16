@@ -314,3 +314,9 @@ dialog.library-panel {
   .library-final-book,
   .library-cell.is-love { animation: none; }
 }
+
+.library-guide { margin: 0 0 8px; color: var(--ink); font-size: 13px; }
+.library-guide summary { cursor: pointer; padding-block: 12px; min-height: 44px; }
+.library-guide p { margin: 0 0 8px; }
+.library-grid-link { margin-block: 4px; }
+.library-grid-scroll { scroll-margin-top: 66px; }
