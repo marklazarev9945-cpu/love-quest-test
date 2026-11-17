@@ -54,7 +54,7 @@
     });
   }
   // Visual-only state. Gameplay coordinates, input, spawn and collisions are unchanged.
-  const WORLDS=[{name:'Первое свидание',sky:'#b9e4fa',ground:'#a5c985',road:'#d9cbb0',edge:'#fff2d4'},{name:'Первое путешествие',sky:'#c6dce8',ground:'#91b6b8',road:'#c7b9ad',edge:'#f9e7d7'},{name:'Предложение',sky:'#a6ddf6',ground:'#e9d5a5',road:'#e1c9a7',edge:'#fff3d7'},{name:'Дом',sky:'#f4d9ba',ground:'#d7b9a2',road:'#d5b7a2',edge:'#fff1df'}];
+  const WORLDS=[{name:'Бутовский парк',sky:'#b9e4fa',ground:'#a5c985',road:'#d9cbb0',edge:'#fff2d4'},{name:'Первое путешествие',sky:'#c6dce8',ground:'#91b6b8',road:'#c7b9ad',edge:'#f9e7d7'},{name:'Предложение',sky:'#a6ddf6',ground:'#e9d5a5',road:'#e1c9a7',edge:'#fff3d7'},{name:'Дом',sky:'#f4d9ba',ground:'#d7b9a2',road:'#d5b7a2',edge:'#fff1df'}];
   const WORLD_FADE=1.15, LABEL_TIME=2.8;
   let worldIndex=0,previousWorld=0,worldFade=WORLD_FADE,labelAge=LABEL_TIME;
   // Shared world-space longitudinal coordinates: game object z = travel - spawnTravel.
@@ -78,7 +78,7 @@
   function hud(){heartsUI.textContent=`♥ ${Math.min(state.hearts,CONFIG.goal)}/${CONFIG.goal}`;livesUI.textContent='●'.repeat(state.lives)+'○'.repeat(3-state.lives);pauseButton.textContent=state.mode==='paused'?'Продолжить':'Пауза';}
   function show(heading,body,button){title.textContent=heading;message.textContent=body;action.textContent=button;overlay.classList.remove('hidden');}
   function hide(){overlay.classList.add('hidden');}
-  function setMode(mode){state.mode=mode;lastTime=null;hud();if(mode==='playing')hide();else if(mode==='start')show('LOVE DASH','Собери 100 сердечек, найди кольцо и получи последнюю улику!','Играть');else if(mode==='paused')show('Пауза','Игра остановлена. Продолжим?','Продолжить');else if(mode==='recover')show('Сердечки на месте ♥','Жизни закончились, но собранные сердечки сохраняются.','Продолжить');else if(mode==='won')show('Победа! Последняя улика найдена','Ты собрала кольцо! ♥','Сыграть ещё раз');notifyQuestState();}
+  function setMode(mode){state.mode=mode;lastTime=null;hud();if(mode==='playing')hide();else if(mode==='start')show('LOVE DASH','Впереди последняя улика! Собери 100 сердечек, избегай препятствий и найди кольцо в конце пути.','Играть');else if(mode==='paused')show('Пауза','Игра остановлена. Продолжим?','Продолжить');else if(mode==='recover')show('Сердечки на месте ♥','Жизни закончились, но собранные сердечки сохраняются.','Продолжить');else if(mode==='won')show('Последняя улика найдена!','Ты собрала кольцо! ♥','Сыграть ещё раз');notifyQuestState();}
   function restart(){state=newState();resetPark();worldIndex=0;previousWorld=0;worldFade=WORLD_FADE;labelAge=0;setMode('playing');}
   function resume(){if(state.mode==='recover'){state.lives=3;state.invulnerable=CONFIG.invulnerable;state.objects=state.objects.filter(o=>o.kind!=='obstacle');}setMode('playing');}
   function actionClick(){if(state.mode==='start'||state.mode==='won')restart();else if(state.mode==='recover'||state.mode==='paused')resume();}

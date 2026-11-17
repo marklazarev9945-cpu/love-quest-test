@@ -171,9 +171,9 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
     return true;
   }
 
-  function showPuzzle() {
+  function showPuzzle(matches = null, checkMessage = '') {
     setScreen('Восстановить хронологию');
-    const instructions = element('p', 'Расставь снимки от самого раннего к самому позднему. Выбери две фотографии, чтобы поменять их местами.');
+    const instructions = element('p', 'Восстанови нашу историю: расставь шесть фотографий от самой ранней к самой поздней. Нажми на два снимка, чтобы поменять их местами.');
     const selectionNote = element('p', undefined, 'archive-selection-note');
     selectionNote.setAttribute('role', 'status');
     const board = element('ol', undefined, 'archive-board');
@@ -181,7 +181,8 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
     const controls = [];
     const images = [];
     const labels = [];
-    const feedback = element('p', undefined, 'archive-feedback');
+    const marks = [];
+    const feedback = element('p', checkMessage, 'archive-feedback');
     feedback.setAttribute('role', 'status');
 
     function updateBoard() {
@@ -194,21 +195,32 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
         image.width = photo.width;
         image.height = photo.height;
         controls[position].setAttribute('aria-pressed', String(selected === position));
-        controls[position].setAttribute('aria-label', 'Выбрать снимок в позиции ' + (position + 1));
+        const correct = matches?.[position];
+        const result = correct === undefined ? '' : correct ? 'На своём месте' : 'Нужно переставить';
+        controls[position].setAttribute('aria-label', 'Выбрать снимок в позиции ' + (position + 1) +
+          (result ? '. ' + result : ''));
+        const mark = marks[position];
+        mark.hidden = correct === undefined;
+        mark.textContent = correct === undefined ? '' : correct ? '✓' : '×';
+        if (correct === undefined) delete controls[position].dataset.match;
+        else controls[position].dataset.match = correct ? 'correct' : 'incorrect';
         labels[position].textContent = selected === position ? 'Выбрано' : 'Выбрать снимок';
       });
+      hintText.hidden = !matches;
+      hintCount.textContent = matches ? 'На своих местах: ' + matches.filter(Boolean).length + ' из ' + correctOrder.length : '';
       selectionNote.textContent = selected === null ? 'Снимков: 6. Выбери первую карточку.' :
         'Выбрана позиция ' + (selected + 1) + '. Выбери вторую карточку для обмена.';
     }
 
     function choose(position) {
-      feedback.textContent = '';
       if (selected === null || selected === position) {
         selected = selected === position ? null : position;
       } else {
         const previous = selected;
         [progress.order[previous], progress.order[position]] = [progress.order[position], progress.order[previous]];
         selected = null;
+        matches = null;
+        feedback.textContent = '';
         saveProgress();
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           for (const index of [previous, position]) {
@@ -227,11 +239,14 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
       select.dataset.position = position;
       const image = makePhoto(id);
       const label = element('span', undefined, 'archive-select-label');
-      select.append(image, label);
+      const mark = element('span', undefined, 'archive-match-mark');
+      mark.setAttribute('aria-hidden', 'true');
+      select.append(image, label, mark);
+      marks.push(mark);
       controls.push(select);
       images.push(image);
       labels.push(label);
-      const preview = button('Рассмотреть', () => showPreview(progress.order[position], showPuzzle, '[data-preview="' + position + '"]'));
+      const preview = button('Рассмотреть', () => showPreview(progress.order[position], () => showPuzzle(matches, feedback.textContent), '[data-preview="' + position + '"]'));
       preview.classList.add('archive-preview-button');
       preview.dataset.preview = position;
       preview.setAttribute('aria-label', 'Рассмотреть снимок в позиции ' + (position + 1));
@@ -240,19 +255,20 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
     });
 
     const hintText = element('p', undefined, 'archive-hint');
-    hintText.hidden = !progress.hintUsed;
-    hintText.textContent = 'Открой «Рассмотреть» у двух снимков, которые трудно сравнить. Обрати внимание на место, одежду, сезон и на то, что видно вокруг. Какие события ты вспоминаешь по этим деталям?';
-    const hint = button(progress.hintUsed ? 'Подсказка открыта' : 'Нужна помощь?', () => {
-      progress.hintUsed = true;
-      hintText.hidden = false;
-      hint.textContent = 'Подсказка открыта';
-      hint.disabled = true;
-      saveProgress();
+    hintText.textContent = 'Давай проверим, какие воспоминания уже на своих местах. Правильно расположенные фотографии отмечены зелёным, а те, которые нужно переставить, — красным.';
+    const hintCount = element('p', undefined, 'archive-hint-count');
+    hintCount.setAttribute('role', 'status');
+    const hint = button('Нужна помощь?', () => {
+      matches = progress.order.map((id, index) => id === correctOrder[index]);
+      if (!progress.hintUsed) {
+        progress.hintUsed = true;
+        saveProgress();
+      }
+      updateBoard();
     });
-    hint.disabled = progress.hintUsed;
     const check = button('Проверить хронологию', () => {
       if (!isCorrect(progress.order)) {
-        feedback.textContent = 'Пока история не складывается. Вспомни, что было раньше, и попробуй поменять снимки местами.';
+        feedback.textContent = 'Пока не всё совпало. Можешь поменять фотографии местами или воспользоваться подсказкой, чтобы увидеть ошибки.';
         return;
       }
       progress.verified = true;
@@ -262,7 +278,7 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
     }, true);
     const navigation = element('div', undefined, 'archive-actions');
     navigation.append(check, button('Вернуться в архив', showRoom), backToMap());
-    body.append(instructions, hint, hintText, selectionNote, board, feedback, navigation);
+    body.append(instructions, hint, hintText, hintCount, selectionNote, board, feedback, navigation);
     updateBoard();
   }
 
@@ -271,7 +287,7 @@ function createArchiveMission({panel, body, title, kicker, closeButton, element,
     setScreen(isCompleted() ? 'Воспоминания из архива' : 'Хронология восстановлена');
     // Dates are rendered only after a successful check or in the archived view.
     const dates = ['28.06.2025', '14.09.2025', '14.10.2025', '25.04.2026', '18.07.2026', '30.07.2026'];
-    body.append(element('p', 'Шесть мгновений снова на своих местах. Как много дорог уже позади — и сколько ещё впереди, вместе.'));
+    body.append(element('p', 'Шесть фотографий, шесть мгновений нашей истории. И это только малая часть всего, что мы уже успели пережить вместе.'));
     const timeline = element('ol', undefined, 'archive-timeline');
     let loaded = 0;
     let saveButton;

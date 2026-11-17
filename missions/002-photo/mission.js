@@ -9,7 +9,7 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
   const columns = 3;
   const rows = 4;
   const tileCount = columns * rows;
-  const caption = '14 июня 2026 года. Балтийская коса. В тот день началась наша следующая глава.';
+  const caption = '14 июня 2026 года. Балтийская коса. В тот день я задал тебе самый важный вопрос в своей жизни. И услышал самый счастливый ответ.';
   let order = readOrder();
   let selected = null;
   let returnFromPreview = null;
@@ -216,7 +216,7 @@ function createPhotoMission({panel, body, title, kicker, closeButton, element, b
       picture.append(ornament);
     }
     figure.append(picture, element('figcaption', caption));
-    body.append(figure, element('p', 'Некоторые мгновения хочется собрать по кусочкам, чтобы снова увидеть их целиком.'), actions);
+    body.append(figure, element('p', 'Этот день я бы с удовольствием прожил ещё тысячу раз. Особенно ту секунду, когда ты сказала «да».'), actions);
   }
 
   return {

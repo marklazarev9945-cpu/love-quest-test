@@ -4,25 +4,25 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   const storageKey = 'lovequest.chapter04.finale.v1';
   const letters = [
     {
-      id: 'home', numeral: 'I', title: 'Вечер, который останется на страницах',
+      id: 'home', numeral: 'I', title: 'Вечер для нашей истории',
       paragraphs: [
-        'Катёнок, приглашаю тебя провести уютный вечер вдвоём. Давай закажем что-нибудь очень вкусное, устроимся поудобнее и наконец соберём наш фотоальбом. Будем выбирать фотографии, вспоминать наши поездки, первые свидания и смеяться над любимыми моментами.',
-        'Только ты, я и наши воспоминания ❤️'
+        'Катёнок, приглашаю тебя на уютное домашнее свидание 29 ноября. Закажем что-нибудь вкусное, устроимся рядом и продолжим собирать наш настоящий фотоальбом. Будем выбирать фотографии, вспоминать поездки, первые свидания и решать, какие моменты обязательно должны остаться на его страницах.',
+        'Только ты, я, вкусная еда и целый вечер для нас двоих ❤️'
       ]
     },
     {
-      id: 'city', numeral: 'II', title: 'Свидание вне привычного маршрута',
+      id: 'city', numeral: 'II', title: 'Свидание, которое я для нас придумал',
       paragraphs: [
-        'Катёнок, приглашаю тебя на настоящее свидание! Давай красиво оденемся, отправимся в музей, погуляем по центру города, а вечером сходим в ресторан на вкусный ужин.',
-        'Обещаю, что организацию этого дня возьму на себя ❤️'
+        'Катёнок, приглашаю тебя на свидание в городе 29 ноября! Давай красиво оденемся, отправимся в Палату науки, погуляем по Белграду, а потом сходим в ресторан. Хочу, чтобы у нас был целый день для новых впечатлений, разговоров и вкусной еды.',
+        'А все организационные хлопоты я с удовольствием возьму на себя ❤️'
       ]
     },
     {
-      id: 'trip', numeral: 'III', title: 'Туда, где нас ещё не было',
+      id: 'trip', numeral: 'III', title: 'Маленькое путешествие для нас двоих',
       paragraphs: [
-        'Катёнок, приглашаю тебя в маленькое путешествие! Мы возьмём машину, включим любимую музыку и отправимся навстречу новым впечатлениям. Будем гулять, открывать интересные места и обязательно вкусно поужинаем.',
-        'А куда именно поедем, решишь ты: отдыхать в термах или знакомиться с древним миром в палеонтологическом музее.',
-        'Главное, что мы будем вместе ❤️'
+        'Катёнок, а что, если устроить маленькое путешествие 29 ноября? Возьмём машину, включим любимую музыку и отправимся исследовать Сербию. Хочу провести с тобой целый день где-нибудь, где мы ещё не были.',
+        'А направление выберешь ты: поедем отдыхать в термах на Fruške или отправимся в соседний Свилайнац, чтобы увидеть динозавров в Музее естественной истории.',
+        'Какое бы направление ты ни выбрала, главная радость для меня — быть рядом с тобой ❤️'
       ]
     }
   ];
@@ -162,7 +162,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     }
     scene.append(picture, desk);
     if (!progress.choice) {
-      body.append(element('p', 'Расследование завершено. Но у этого дела оказалось сразу три продолжения. Перед тобой три письма. Открой каждое — и выбери, какую историю мы напишем следующей.'));
+      body.append(element('p', 'Все шесть дел раскрыты. И теперь понятно, что свидание вовсе не пропало — я просто приготовил для тебя кое-что особенное. Перед тобой три письма. Прочитай каждое и выбери, какое приключение ждёт нас следующим.'));
     }
     body.append(scene);
     if (progress.choice) {
@@ -170,7 +170,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     } else {
       const allRead = progress.read.length === letters.length;
       body.append(element('p', allRead ?
-        'Все приглашения прочитаны. Осталось выбрать только одно. Хотя, между нами, остальные никуда не исчезнут.' :
+        'Теперь ты знаешь все три варианта. Выбирай тот, который хочется больше всего. А остальные мы обязательно сможем осуществить в другой раз.' :
         'Прочитано писем: ' + progress.read.length + ' из 3.', 'finale-note'));
       const choose = button('Выбрать свидание', showChoice, true);
       choose.disabled = !allRead;
@@ -267,9 +267,9 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   function showConfirmation() {
     if (progress.choice) return showResult();
     if (!isFinaleChoice(progress.draft)) return showChoice();
-    screen('confirm', 'Отправить ответ организатору расследования?');
+    screen('confirm', 'Ну что, Катёнок, отправим твой выбор организатору этого расследования?');
     body.append(choiceCard(progress.draft));
-    const confirm = button('Отправить приглашение', async () => {
+    const confirm = button('Отправить мой выбор ❤️', async () => {
       confirm.disabled = true;
       // Where available, serialize confirmations from two tabs of the same game.
       const commit = () => {
@@ -344,7 +344,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
   }
 
   function showSent() {
-    screen('sent', 'Приглашение отправлено ❤️');
+    screen('sent', 'Твой выбор сделан ❤️');
     const stage = element('div', undefined, 'finale-sent-envelope');
     stage.append(makeEnvelope(letters.find(letter => letter.id === progress.choice.option).numeral));
     body.append(stage, choiceCard(progress.choice));
@@ -374,7 +374,7 @@ function createFinale({panel, body, title, kicker, element, button, fragments, i
     const scene = element('div', undefined, 'finale-ending-scene' + (animate ? ' is-animated' : ''));
     scene.innerHTML = FINALE_ENDING_ART;
     const greeting = element('div', undefined, 'finale-greeting');
-    greeting.append(element('p', 'Спасибо за наши четыре месяца.'), element('p', 'Я люблю тебя. Твой муж ❤️'));
+    greeting.append(element('p', 'Спасибо тебе за эти четыре месяца. И за каждый день, который мы проживаем вместе.'), element('p', 'Люблю тебя бесконечно. Твой муж ❤️'));
     const choice = choiceCard(progress.choice);
     choice.prepend(element('span', 'Твой выбор', 'eyebrow'));
     body.append(scene, greeting, choice);

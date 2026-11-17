@@ -411,7 +411,7 @@
       panelBody.append(panelButton('Вернуться на карту',() => panel.close()));
     } else if (kind === 'journal') {
       panelTitle.textContent = 'Журнал дела';
-      panelBody.append(element('p','Свидание исчезло без адреса и времени. Каждое раскрытое дело оставит здесь слово. Из шести находок сложится одно послание.'));
+      panelBody.append(element('p','У каждого раскрытого дела есть своя находка. Собери все шесть слов, чтобы прочитать послание и приблизиться к разгадке.'));
       const list = element('ol',undefined,'clue-list');
       MISSIONS.forEach((mission,index) => {
         const found = statusOf(mission) === 'completed';
@@ -432,7 +432,7 @@
       panelBody.append(element('p','Иди за Катей на карте: она стоит у текущего дела. Нажми на здание, чтобы открыть дело. Следующая дверь откроется после предыдущей находки.'),element('p','Слова послания хранятся в журнале. Заглядывай туда, когда захочется собрать мысли вместе.'),element('div','Первое дело ждёт в Доме воспоминаний. Открой его карточку и войди в дом, чтобы начать расследование.','pending-note'));
     } else {
       panelTitle.textContent = 'Дело особой важности';
-      panelBody.append(element('p','Катя, в этом городке знакомые места умеют хранить секреты. Здесь не нужно торопиться: замечай детали, собирай слова и доверяй своим воспоминаниям.'));
+      panelBody.append(element('p','В этом городке каждая деталь может оказаться уликой. Исследуй знакомые места, собирай фрагменты послания и доверяй своим воспоминаниям.'));
       const actions = element('div',undefined,'menu-actions');
       actions.append(panelButton('Карта расследования',() => { panel.close(); showMap(); }),panelButton('Подсказка',() => openPanel('help')),panelButton('Пересмотреть вступление',showIntro));
       panelBody.append(actions,element('p','Находки сохраняются только в этом браузере.','quiet'));

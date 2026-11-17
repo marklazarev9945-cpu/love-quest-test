@@ -288,3 +288,28 @@ dialog.archive-panel.archive-preview {
   .archive-box { transition: none; }
   .archive-panel[open] .archive-mote { animation: none; }
 }
+
+.archive-select[data-match] {
+  position: relative;
+  box-shadow: inset 0 0 0 2px var(--archive-match-color);
+}
+
+.archive-select[data-match="correct"] { --archive-match-color: #42674a; }
+.archive-select[data-match="incorrect"] { --archive-match-color: #9a4649; }
+
+.archive-match-mark {
+  position: absolute;
+  inset: 8px 8px auto auto;
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: var(--archive-match-color);
+  color: white;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.archive-hint-count { color: var(--ink); font-weight: 650; }
+.archive-hint-count:empty { margin: 0; }

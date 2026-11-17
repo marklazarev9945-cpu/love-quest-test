@@ -6,22 +6,22 @@ function createObjectsMission({panel, body, title, kicker, element, button, isCo
   const objects = [
     {
       id: 'ring', x: 246, y: 247, name: 'Кольцо с бриллиантом',
-      story: 'Некоторые обещания помещаются в маленькой коробочке. Но значат гораздо больше.',
+      story: 'Маленькая коробочка, одно кольцо и вопрос, к которому я так долго готовился.',
       art: '<rect x="12" y="5" width="40" height="33" rx="7" fill="#795567" stroke="#61434f" stroke-width="2"/><rect x="16" y="9" width="32" height="25" rx="5" fill="#a87582"/><path d="M12 35h40v8q0 7-6 7H18q-6 0-6-7z" fill="#a17180" stroke="#61434f" stroke-width="2"/><path d="M16 37h32" stroke="#d2a1a4" stroke-width="2"/><circle cx="32" cy="30" r="8" fill="none" stroke="#f9d080" stroke-width="4"/><path d="m24 22 4-7h8l4 7-8 7z" fill="#dcf3ed" stroke="#617f7a" stroke-width="1.5"/><path d="M24 22h16m-12-7 4 14 4-14" fill="none" stroke="#93bcb5"/>'
     },
     {
       id: 'book', x: 346, y: 126, name: 'Книга, подаренная Катей',
-      story: 'Есть подарки, которые хочется перечитывать. Особенно когда они от любимого человека.',
+      story: 'Эта книга особенная не только из-за того, что написано внутри. Она особенная, потому что её подарила мне ты.',
       art: '<path d="M12 48V10h11v38m1 0V6h13v42m2 0V13h11v35" fill="#aa977d" stroke="#725d51" stroke-width="2"/><path d="M25 8h11v38H25z" fill="#788876"/><path d="m27 23 3 4 4-4-4-3Z" fill="#edc6a2"/><path d="M14 15h7m-7 28h7m20-24h7m-7 22h7" stroke="#d8c7a3"/><path d="M8 49h47" stroke="#b88e70" stroke-width="4"/>'
     },
     {
       id: 'cuffs', x: 326, y: 293, name: 'Игрушечные наручники',
-      story: 'У каждой пары есть свои секретные шутки. Эта улика — явно не для протокола 😉',
+      story: 'Некоторые подробности нашей истории лучше оставить за закрытой дверью детективного бюро. Но мы-то с тобой всё прекрасно помним 😉',
       art: '<path d="m24 25 5-4 5 5-4 5m2-5 5-2 4 6-4 4" fill="none" stroke="#605e73" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="15" cy="19" rx="10" ry="11" fill="none" stroke="#615e77" stroke-width="6"/><ellipse cx="48" cy="34" rx="10" ry="11" fill="none" stroke="#615e77" stroke-width="6"/><ellipse cx="15" cy="19" rx="10" ry="11" fill="none" stroke="#ad9cbd" stroke-width="3.5"/><ellipse cx="48" cy="34" rx="10" ry="11" fill="none" stroke="#ad9cbd" stroke-width="3.5"/><path d="m20 22 7 4-3 6-7-4m25-5-7 3 3 6 7-3" fill="#c9b7d1" stroke="#615e77" stroke-width="1.5"/>'
     },
     {
       id: 'car', x: 85, y: 258, name: 'Игрушечная машинка',
-      story: 'Сколько дорог уже позади. И сколько ещё приключений впереди — вместе.',
+      story: 'У нас уже столько совместных дорог и приключений. И я очень хочу, чтобы впереди их было ещё больше. Главное — с тобой рядом.',
       art: '<path d="M5 38v-9l9-4 9-11h18l10 11 8 5v8z" fill="#b96f5e" stroke="#855649" stroke-width="2"/><path d="m20 25 6-8h6v8zm15 0v-8h5l8 8z" fill="#d0e4df"/><path d="M7 31h49" stroke="#e2a78e" stroke-width="2"/><path d="M55 32h4" stroke="#f7dfa0" stroke-width="3"/><circle cx="16" cy="39" r="7" fill="#504b4b"/><circle cx="48" cy="39" r="7" fill="#504b4b"/><circle cx="16" cy="39" r="3" fill="#e4c8a8"/><circle cx="48" cy="39" r="3" fill="#e4c8a8"/>'
     },
     {

@@ -191,7 +191,7 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
     setScreen(isCompleted() ? 'Страница из архива' : 'Одна история на двоих', 'complete');
     const book = element('div', undefined, 'library-final-book');
     book.append(element('span', 'VIII', 'eyebrow'), element('h3', 'Все ответы сложились в одну историю.'),
-      element('p', 'В знакомых словах — столько дорогих сердцу воспоминаний. Эта страница теперь на своём месте.'));
+      element('p', 'Восемь ответов — и всё про нас. Даже в обычном кроссворде нашлось место для маленькой истории любви.'));
     body.append(book, button('Рассмотреть решённый кроссворд', showCrossword));
     if (!isCompleted()) {
       body.append(button('Сохранить страницу в архиве', () => {
@@ -342,7 +342,7 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
         error = true;
         input.setAttribute('aria-invalid', 'true');
         feedback.textContent = /^[А-ЯЁ]+$/.test(answer) ?
-          'Пока не сходится. Вспомни ещё раз — буквы на пересечениях помогут.' :
+          'Пока не сходится. Попробуй ещё раз или воспользуйся подсказкой — она откроет одну букву.' :
           'Введи ответ кириллицей. Регистр не важен.';
         update();
         return;
@@ -435,7 +435,7 @@ function createLibraryMission({panel, body, title, kicker, element, button, isCo
     navigation.append(button('Вернуться в библиотеку', showLibrary), backToMap());
     const guide = element('details', undefined, 'library-guide');
     guide.append(element('summary', 'Как пользоваться кроссвордом'),
-      element('p', 'Вводи слово целиком. Точки обозначают пустые клетки. Выбери вопрос или коснись слова в сетке. Повторное касание на пересечении меняет направление. Сетку можно прокручивать вбок.'));
+      element('p', 'Выбери вопрос и введи ответ целиком. Точки — пустые клетки. Можно выбирать слова прямо в сетке, а на пересечениях переключать направление повторным нажатием. Сетка прокручивается вбок.'));
     const gridLink = button('К сетке', () => {
       input.blur();
       scroll.focus({preventScroll: true});
