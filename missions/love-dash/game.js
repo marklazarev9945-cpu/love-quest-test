@@ -4,8 +4,10 @@
   // Test-only: change to true locally to start at 99 hearts; NEVER enable in a published build.
   const LOCAL_TEST_99_HEARTS = false;
   const DEBUG_MOTION = false; // Development only; false in published build.
-  const PARK = Object.freeze({spacing:0.40, ahead:2.0, sideOffset:0.15, maxVisibleDepth:2.3});
+  const PARK = Object.freeze({spacing: .155, ahead: .32});
   const canvas=document.querySelector('#canvas'),ctx=canvas.getContext('2d');
+  const art = createDashArt(ctx);
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const stage=document.querySelector('#stage'),overlay=document.querySelector('#overlay');
   const title=document.querySelector('#title'),message=document.querySelector('#message'),action=document.querySelector('#action');
   const heartsUI=document.querySelector('#hearts'),livesUI=document.querySelector('#lives'),pauseButton=document.querySelector('#pause');
@@ -60,21 +62,35 @@
   // Shared world-space longitudinal coordinates: game object z = travel - spawnTravel.
   // Park landmarks use the exact same travel and projection as collectible objects.
   const parkLandmarks=[];
-  let nextParkDistance=0, parkSerial=0;
-  function resetPark(){parkLandmarks.length=0;nextParkDistance=0;parkSerial=0;fillPark();}
-  function fillPark(){
-    while(nextParkDistance < state.travel + PARK.ahead){
-      const n=parkSerial++;
-      for(let side of [-1,1]){
-        // A fixed variety, without random frame-to-frame reshuffling.
-        const kinds=['tree','lamp','bush','tree','bench','tree','bush'];
-        parkLandmarks.push({distance:nextParkDistance,side,kind:kinds[(n*3+(side===1?2:0))%kinds.length],variant:(n*7+(side===1?3:0))%5});
+  const parkPlaces = [
+    ['tree','bush'], ['lamp','tree'], ['bush','bench'], ['visitors','tree'],
+    ['tree','bush'], ['bin','sign'], ['bush','tree'], ['bench','visitors'],
+    ['tree','lamp'], ['sign','bush'], ['tree','tree'], ['bush','bench']
+  ];
+  let nextParkDistance, parkSerial;
+  function resetPark() {
+    parkLandmarks.length = 0;
+    nextParkDistance = -1.48;
+    parkSerial = 0;
+    fillPark();
+  }
+
+  function fillPark() {
+    while (nextParkDistance < state.travel + PARK.ahead) {
+      const serial = parkSerial++;
+      const group = parkPlaces[serial % parkPlaces.length];
+      for (const side of [-1, 1]) {
+        const index = (side === 1 ? 1 : 0) ^ (Math.floor(serial / parkPlaces.length) % 2);
+        parkLandmarks.push({
+          distance: nextParkDistance + (side===1 ? .029+(serial%3)*.025 : 0), side, kind: group[index],
+          variant: (serial * 3 + (side === 1 ? 2 : 0) + Math.floor(serial / 3)) % 7
+        });
       }
-      nextParkDistance+=PARK.spacing+(n%4)*.055;
+      nextParkDistance += PARK.spacing + (serial % 5) * .027;
     }
   }
   resetPark();
-  function resize(){const box=stage.getBoundingClientRect();width=Math.max(1,box.width);height=Math.max(1,box.height);dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);render();}
+  function resize(){const box=canvas.getBoundingClientRect();width=Math.max(1,box.width);height=Math.max(1,box.height);dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);render();}
   function hud(){heartsUI.textContent=`♥ ${Math.min(state.hearts,CONFIG.goal)}/${CONFIG.goal}`;livesUI.textContent='●'.repeat(state.lives)+'○'.repeat(3-state.lives);pauseButton.textContent=state.mode==='paused'?'Продолжить':'Пауза';}
   function show(heading,body,button){title.textContent=heading;message.textContent=body;action.textContent=button;overlay.classList.remove('hidden');}
   function hide(){overlay.classList.add('hidden');}
@@ -128,104 +144,171 @@
     state.objects=state.objects.filter(o=>!o.handled&&o.z<1.12);
     hud();
   }
-  // The painted trapezoid and every world-space anchor share this section.
-  function roadSection(y){
-    const horizon=height*.13,bottom=height*1.04;
-    const roadWidth=width*(.22+.74*(y-horizon)/(bottom-horizon));
-    return {y,left:width/2-roadWidth/2,right:width/2+roadWidth/2,laneWidth:roadWidth/3};
+  // All ground anchors use one road section at their projected depth.
+  const horizonRatio = .21;
+  const bottomRatio = 1.04;
+  function roadSection(y) {
+    const horizon = height * horizonRatio;
+    const roadWidth = width * (.18 + .66 * (y-horizon) / (height*bottomRatio-horizon));
+    return {y, left: (width-roadWidth)/2, right: (width+roadWidth)/2, laneWidth: roadWidth/3};
   }
-  function roadBoundary(boundary,section){return section.left+boundary*section.laneWidth;}
-  function roadX(lane,z){return roadBoundary(lane+.5,projectDepth(z));}
-  function projectDepth(z){
-    const depth=Math.max(0,z),horizon=height*.13;
-    const section=roadSection(horizon+(height-horizon)*depth*depth);
-    const contactY=horizon+(height-horizon)*CONFIG.contactZ*CONFIG.contactZ;
-    const contact=roadSection(contactY);
-    // Uniform CSS-pixel scaling; DPR only controls the backing buffer.
-    // Character bounds include the round caps on the animated legs.
-    const contactScale=Math.max(0,Math.min(1,width/390,(contactY-8)/33,(height-contactY-8)/37));
-    return {...section,scale:contactScale*section.laneWidth/contact.laneWidth};
+
+  function roadBoundary(boundary, section) { return section.left + boundary * section.laneWidth; }
+
+  function projectDepth(z) {
+    const depth = Math.max(0, z);
+    const horizon = height * horizonRatio;
+    const section = roadSection(horizon + (height-horizon)*depth*depth);
+    const contact = roadSection(horizon + (height-horizon)*CONFIG.contactZ**2);
+    const contactScale = Math.max(.001, Math.min(1, width/390, contact.laneWidth/62, (contact.y-7)/79));
+    return {...section, scale: contactScale * section.laneWidth/contact.laneWidth};
   }
-  function parkPlacement(item,z){
-    // Keep the desktop contact size close to the original .89 * 1.25.
-    const proj=projectDepth(z),scale=proj.scale*1.1;
-    // Conservative local bounds include strokes and all illustration parts.
-    const bounds=item.kind==='tree'?[-46,-143,46,1]:item.kind==='lamp'?[-15,-128,15,3]:item.kind==='bench'?[-36,-41,36,3]:[-37,-43,43,7];
-    const [left,top,right,bottom]=bounds;
-    const edge=roadSection(Math.max(height*.13,proj.y+bottom*scale));
-    const gap=proj.laneWidth*(.08+.02*item.variant);
-    const x=item.side<0?edge.left-gap-right*scale:edge.right+gap-left*scale;
-    return {x,y:proj.y,scale,left:x+left*scale,right:x+right*scale,top:proj.y+top*scale,bottom:proj.y+bottom*scale};
+
+  const sceneryBounds = {
+    tree: [58, 159, 8], bush: [39, 33, 7], bench: [35, 39, 6],
+    lamp: [25, 116, 5], sign: [26, 57, 6], bin: [17,31,6], visitors: [35,45,5]
+  };
+
+  function parkPlacement(item,z) {
+    const {y,scale,left,right,laneWidth} = projectDepth(z);
+    const aspect = Math.min(1.12, width/height*.45+.69);
+    // Once the anchor leaves the field, bound the scale so even tall trees can clear the screen on short viewports.
+    const size = Math.min(scale, 1.35) * aspect * (.87 + item.variant%4*.075);
+    const shoulder = item.side < 0 ? left : width-right;
+    const edge = item.side < 0 ? left : right;
+    const x = edge + item.side * (shoulder*(.26+.075*(item.variant%4)) + laneWidth*.08);
+    const [halfWidth,top,bottom] = sceneryBounds[item.kind];
+    return {x,y,scale:size, left:x-halfWidth*size, right:x+halfWidth*size, top:y-top*size, bottom:y+bottom*size};
   }
-  function decorationFullyBelow(item,z){
-    if(z<0)return false;
-    return parkPlacement(item,z).top>height+8;
+
+  function decorationFullyBelow(item,z) {
+    return z>=0 && parkPlacement(item,z).top>height+8;
   }
-  function parkDecoration(item,z){
-    if(z<0||decorationFullyBelow(item,z))return;
-    const {x,y,scale}=parkPlacement(item,z);
-    ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
-    if(item.kind==='tree'){
-      ctx.fillStyle='#927454';ctx.fillRect(-6,-77,12,77);
-      for(const [cx,cy,r] of [[0,-110,32],[-20,-92,26],[20,-90,25]]){
-        ctx.fillStyle='#609b62';ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle='#a6d28b';ctx.beginPath();ctx.arc(cx-8,cy-9,r*.36,0,Math.PI*2);ctx.fill();
-      }
-    }else if(item.kind==='lamp'){
-      ctx.strokeStyle='#566c60';ctx.lineWidth=6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-116);ctx.stroke();
-      rounded(-12,-125,24,21,7,'#526d60');rounded(-8,-121,16,13,4,'#fff2be');
-    }else if(item.kind==='bench'){
-      rounded(-33,-38,66,12,4,'#b17e58');rounded(-33,-22,66,11,3,'#bd8b60');
-      ctx.strokeStyle='#705b4c';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-24,-12);ctx.lineTo(-24,0);ctx.moveTo(24,-12);ctx.lineTo(24,0);ctx.stroke();
-    }else{
-      for(const [cx,cy,r] of [[-15,-15,21],[10,-18,24],[27,-11,15]]){ctx.fillStyle='#7bb478';ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();}
+
+  function drawParkMotion() {
+    const top = projectDepth(0), bottom = roadSection(height*bottomRatio);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0,0); ctx.lineTo(top.left,0); ctx.lineTo(top.left,top.y); ctx.lineTo(bottom.left,bottom.y); ctx.lineTo(0,bottom.y); ctx.closePath();
+    ctx.moveTo(width,0); ctx.lineTo(top.right,0); ctx.lineTo(top.right,top.y); ctx.lineTo(bottom.right,bottom.y); ctx.lineTo(width,bottom.y); ctx.closePath();
+    ctx.clip();
+    const opacity = ctx.globalAlpha;
+    // Distances are ordered at insertion, so reversing draws far to near.
+    for (let i=parkLandmarks.length-1; i>=0; i--) {
+      const item = parkLandmarks[i], z = state.travel-item.distance;
+      if (z<0) continue;
+      const place = parkPlacement(item,z);
+      if (place.top>height || place.right<=0 || place.left>=width) continue;
+      ctx.globalAlpha = opacity * Math.min(1,z/.18);
+      art.scenery(item,place,reducedMotion.matches ? 0 : state.runClock);
     }
     ctx.restore();
   }
-  function drawParkMotion(){
-    // Fixed longitudinal positions; no independent scenery animation clocks.
-    const visible=parkLandmarks.map(item=>({item,z:state.travel-item.distance}))
-      .filter(o=>o.z>=0&&!decorationFullyBelow(o.item,o.z));
-    visible.sort((a,b)=>a.z-b.z);
-    // Restrict scenery to shoulders: never paint over the playable three lanes.
-    ctx.save();
-    const top=projectDepth(0),bottom=roadSection(height*1.04);
-    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(top.left,0);ctx.lineTo(top.left,top.y);ctx.lineTo(bottom.left,bottom.y);ctx.lineTo(0,bottom.y);ctx.closePath();
-    ctx.moveTo(width,0);ctx.lineTo(top.right,0);ctx.lineTo(top.right,top.y);ctx.lineTo(bottom.right,bottom.y);ctx.lineTo(width,bottom.y);ctx.closePath();
-    ctx.clip();
-    for(const {item,z} of visible)parkDecoration(item,z);
-    ctx.restore();
+
+  function drawParkBackdrop() {
+    const top = projectDepth(0), bottom = roadSection(height*bottomRatio);
+    const sky = ctx.createLinearGradient(0,0,0,top.y*1.2);
+    sky.addColorStop(0,'#c4dbd0');
+    sky.addColorStop(1,'#fff0c7');
+    ctx.fillStyle=sky;
+    ctx.fillRect(0,0,width,height);
+    art.ellipse(width*.76,top.y*.36,Math.min(22,width*.06),Math.min(22,width*.06),'#fff2bd');
+    art.ellipse(width*.3,top.y*.33,width*.16,top.y*.08,'#fff8df88');
+    art.ellipse(width*.55,top.y*.15,width*.10,top.y*.045,'#fff8df7f');
+    for (let i=0;i<14;i++) {
+      const x=width*(i+.1)/13, y=top.y*(.94+Math.sin(i*1.3)*.10);
+      art.ellipse(x,y,width*(.055+(i%3)*.013),top.y*(.18+.055*(i%4)),i%2?'#91a78a':'#a6b794');
+    }
+    const grass=ctx.createLinearGradient(0,top.y,0,height);
+    grass.addColorStop(0,'#c1cc97');
+    grass.addColorStop(.55,'#aabd83');
+    grass.addColorStop(1,'#859e6b');
+    ctx.fillStyle=grass;
+    ctx.fillRect(0,top.y,width,height-top.y);
+    for (const side of [-1,1]) {
+      const a=side<0?top.left:top.right, b=side<0?bottom.left:bottom.right;
+      polygon([[a+side*width*.115,top.y],[a+side*width*.146,top.y],
+        [b+side*width*.069,bottom.y],[b+side*width*.019,bottom.y]],'#e2d6ab79');
+    }
+    if (!reducedMotion.matches) drawParkAir(top.y);
   }
-  function heart(x,y,size){
-    ctx.save();ctx.translate(x,y);ctx.scale(size/30,size/30);
-    ctx.shadowColor='#ff2e9d';ctx.shadowBlur=19;ctx.fillStyle='#ff379b';ctx.strokeStyle='#fff0fa';ctx.lineWidth=2.6;
-    ctx.beginPath();ctx.moveTo(0,13);ctx.bezierCurveTo(-8,7,-18,-2,-14,-10);ctx.bezierCurveTo(-10,-19,-2,-16,0,-10);ctx.bezierCurveTo(4,-17,13,-18,16,-9);ctx.bezierCurveTo(20,0,9,9,0,13);ctx.closePath();ctx.fill();ctx.stroke();
-    ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.globalAlpha=.8;ctx.beginPath();ctx.ellipse(-7,-9,3,1.6,-.5,0,Math.PI*2);ctx.fill();ctx.restore();
+
+  function drawParkAir(horizon) {
+    const clock=state.runClock;
+    const flight=(clock+2)%15;
+    if (flight<6) {
+      const x=width*(.12+flight*.10), y=horizon*(.35+flight*.027);
+      ctx.save();
+      ctx.globalAlpha=Math.min(1,flight*2,(6-flight)*2)*.55;
+      for (let i=0;i<2;i++) {
+        const wing=2+Math.sin(clock*7+i)*2;
+        art.line([[x+i*13,y+i*5],[x+4+i*13,y-wing+i*5],[x+8+i*13,y+i*5]],'#5d7163',1.25);
+      }
+      ctx.restore();
+    }
   }
-  function barrier(x,y,size){
-    ctx.save();ctx.translate(x,y);const w=size*1.2,h=size*.65;
-    ctx.shadowColor='#1d1238';ctx.shadowBlur=7;ctx.fillStyle='#a72736';ctx.fillRect(-w/2+3,-h/2+5,w,h);
-    ctx.shadowBlur=0;ctx.fillStyle='#e94a52';ctx.fillRect(-w/2,-h/2,w,h);
-    ctx.save();ctx.beginPath();ctx.rect(-w/2,-h/2,w,h);ctx.clip();ctx.strokeStyle='#fff9f1';ctx.lineWidth=Math.max(4,size*.17);
-    for(let i=-3;i<5;i++){ctx.beginPath();ctx.moveTo(i*size*.34-size*.3,-h);ctx.lineTo(i*size*.34+size*.3,h);ctx.stroke();}ctx.restore();
-    ctx.strokeStyle='#fff0ef';ctx.lineWidth=2;ctx.strokeRect(-w/2,-h/2,w,h);
-    ctx.fillStyle='#692334';ctx.fillRect(-w*.38,h*.5,w*.15,h*.35);ctx.fillRect(w*.23,h*.5,w*.15,h*.35);
-    ctx.restore();
+
+  function drawGroundDetail() {
+    // A fixed scatter repeated over longitudinal distance, so texture and
+    // landmarks advance at exactly the same rate as the game objects.
+    const period=1.36, phase=state.travel%period;
+    for (let i=0;i<88;i++) {
+      const distance=(i*.13793+i%4*.013)%period;
+      const z=(phase-distance+period)%period;
+      if (z>1.02) continue;
+      const p=projectDepth(z);
+      const across=((i*37)%89+.5)/89;
+      const roadside=i%5===0;
+      const side=i%2===0?-1:1;
+      const x=roadside ? (side<0?p.left:p.right)+side*p.laneWidth*(.14+across*.68) :
+        p.left + (p.right-p.left)*across;
+      const s=p.scale*(.65+(i%5)*.27);
+      ctx.globalAlpha=Math.min(1,z/.22);
+      art.ellipse(x,p.y,s*(roadside?3.1:1.6),s*(roadside?1.5:.8),
+        roadside ? (i%3?'#66825180':'#eadb9cc0') : (i%3?'#aa8d613e':'#fff1c77e'));
+    }
+    // Grass tufts and small flower groups move with their verge, like the road texture.
+    for (let i=0;i<38;i++) {
+      const z=(phase-(i*.1013%period)+period)%period;
+      if (z>1.018) continue;
+      const p=projectDepth(z), side=i%2===0?-1:1;
+      const offset=.32+((i*19)%37)*.016;
+      const x=side<0?p.left*(1-offset):p.right+(width-p.right)*offset;
+      const s=p.scale*(.65+(i%3)*.24);
+      ctx.globalAlpha=Math.min(1,z/.19);
+      art.ellipse(x,p.y,5*s,1.4*s,'#6b84545c');
+      art.line([[x-3*s,p.y],[x-4.5*s,p.y-4*s],[x-2*s,p.y-2*s]],'#637e527d',Math.max(.5,s));
+      art.line([[x,p.y],[x+3*s,p.y-5*s],[x+4*s,p.y-7*s]],'#6584538c',Math.max(.5,s));
+      if (i%3===0) {
+        art.ellipse(x+4*s,p.y-7*s,1.5*s,1.4*s,'#eee2ad');
+        art.ellipse(x-4.5*s,p.y-4*s,1.3*s,1.3*s,'#d6b57e');
+      }
+    }
+    ctx.globalAlpha=1;
+    if (!reducedMotion.matches) {
+      const clock=state.runClock, drift=(clock+3)%9;
+      if (drift<4) {
+        const z=.22+.09*drift, p=projectDepth(z);
+        const x=p.left-p.laneWidth*(.31+.1*Math.sin(clock*2));
+        ctx.save();
+        ctx.globalAlpha=Math.min(drift,4-drift,1)*.75;
+        art.ellipse(x,p.y-11,1.9,1.2,'#cc9e64');
+        const wing=1.1+Math.abs(Math.sin(clock*8))*1.5;
+        art.ellipse(x+2,p.y-13,wing,1.9,'#c9a77e');
+        art.ellipse(x-11,p.y+drift*8,2.5,1.4,'#d3ab72');
+        ctx.restore();
+      }
+    }
   }
   function polygon(points,fill){ctx.fillStyle=fill;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();}
   function rounded(x,y,w,h,r,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
-  function tree(x,y,scale){ctx.fillStyle='#876a4b';ctx.fillRect(x-3*scale,y,6*scale,36*scale);for(const [dx,dy,r] of [[0,-7,21],[-13,4,16],[14,3,17]]){ctx.fillStyle='#6caa71';ctx.beginPath();ctx.arc(x+dx*scale,y+dy*scale,r*scale,0,Math.PI*2);ctx.fill();ctx.fillStyle='#9dcf83';ctx.beginPath();ctx.arc(x+(dx-5)*scale,y+(dy-5)*scale,r*.35*scale,0,Math.PI*2);ctx.fill();}}
   function building(x,y,w,h,fill){rounded(x,y,w,h,3,fill);ctx.fillStyle='#f9e9c9';for(let i=0;i<3;i++)for(let j=0;j<2;j++)ctx.fillRect(x+w*(.15+j*.48),y+13+i*h*.23,w*.19,h*.13);polygon([[x-4,y],[x+w/2,y-15],[x+w+4,y]],'#8e8c91');}
   function worldBackdrop(index){
-    const w=WORLDS[index],horizon=height*.13;
+    if(index===0){drawParkBackdrop();return;}
+    const w=WORLDS[index],horizon=height*horizonRatio;
     const sky=ctx.createLinearGradient(0,0,0,height);sky.addColorStop(0,w.sky);sky.addColorStop(1,index===3?'#f6e8d4':'#e5f1e4');ctx.fillStyle=sky;ctx.fillRect(0,0,width,height);
-    // Fixed, gentle landscape illustrations: no moving horizontal road texture.
-    if(index===0){
-      ctx.fillStyle='#b7dca2';ctx.fillRect(0,horizon,width,height);
-      for(let i=0;i<5;i++){const x=width*(i+.25)/4.5;tree(x,height*.25+(i%2)*height*.12,Math.max(.5,width/470));}
-      for(const x of [width*.09,width*.84]){rounded(x,height*.69,width*.12,7,3,'#a67d57');ctx.fillStyle='#886c51';ctx.fillRect(x+5,height*.69+7,4,17);ctx.fillRect(x+width*.12-9,height*.69+7,4,17);}
-      ctx.fillStyle='#81b86d';ctx.fillRect(0,height*.82,width,height*.18);
-    }else if(index===1){
+    // Legacy inactive environments remain disabled in update().
+    if(index===1){
       ctx.fillStyle='#a2c5c9';ctx.fillRect(0,horizon,width,height);
       ctx.fillStyle='#8cb7c5';ctx.fillRect(0,height*.67,width,height*.33);
       building(width*.015,height*.24,width*.21,height*.35,'#ddc8b3');building(width*.77,height*.22,width*.22,height*.38,'#d4bda7');
@@ -248,11 +331,16 @@
   }
   function drawWorld(index){
     worldBackdrop(index);
-    const w=WORLDS[index],top=projectDepth(0),bottom=roadSection(height*1.04);
-    polygon([[top.left,top.y],[top.right,top.y],[bottom.right,bottom.y],[bottom.left,bottom.y]],w.road);
+    const w=WORLDS[index],top=projectDepth(0),bottom=roadSection(height*bottomRatio);
+    const surface=ctx.createLinearGradient(0,top.y,0,bottom.y);
+    surface.addColorStop(0,index===0?'#e8dcb0':w.road);
+    surface.addColorStop(.68,index===0?'#dcc69e':w.road);
+    surface.addColorStop(1,index===0?'#d2b98e':w.road);
+    polygon([[top.left,top.y],[top.right,top.y],[bottom.right,bottom.y],[bottom.left,bottom.y]],surface);
+    if(index===0) drawGroundDetail();
     // Static subtle lane separators and edges, shared by all four locations.
     for(let boundary=0;boundary<=3;boundary++){
-      ctx.strokeStyle=boundary===0||boundary===3?w.edge:'rgba(255,255,255,.47)';ctx.lineWidth=boundary===0||boundary===3?3:2;
+      ctx.strokeStyle=boundary===0||boundary===3?'#fff3d46e':'#8e75572e';ctx.lineWidth=boundary===0||boundary===3?3:2;
       ctx.beginPath();ctx.moveTo(roadBoundary(boundary,top),top.y);ctx.lineTo(roadBoundary(boundary,bottom),bottom.y);ctx.stroke();
     }
   }
@@ -261,46 +349,66 @@
     const fadeIn=Math.min(1,labelAge/.35),fadeOut=Math.min(1,(LABEL_TIME-labelAge)/.65),alpha=Math.min(fadeIn,fadeOut);
     ctx.save();ctx.globalAlpha=alpha;
     const label=WORLDS[worldIndex].name;ctx.font=`700 ${Math.max(14,Math.min(19,width*.043))}px system-ui`;
-    const textWidth=ctx.measureText(label).width,boxWidth=Math.min(width-24,textWidth+32),x=(width-boxWidth)/2,y=height*.19;
-    rounded(x,y,boxWidth,38,18,'rgba(255,250,239,.92)');ctx.fillStyle='#654d4a';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,width/2,y+19);ctx.restore();
+    const textWidth=ctx.measureText(label).width,boxWidth=Math.min(width-24,textWidth+32),x=(width-boxWidth)/2,y=Math.max(3,height*horizonRatio*.43-13);
+    rounded(x,y,boxWidth,38,18,'rgba(255,250,239,.92)');ctx.fillStyle='#654d4a';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,width/2,y+19,boxWidth-18);ctx.restore();
   }
   function render(){
     ctx.clearRect(0,0,width,height);
     if(worldFade<WORLD_FADE&&previousWorld!==worldIndex){drawWorld(previousWorld);ctx.save();ctx.globalAlpha=worldFade/WORLD_FADE;drawWorld(worldIndex);ctx.restore();}
     else drawWorld(worldIndex);
-    // Park scenery shares the world's longitudinal travel with hearts and barriers.
-    // During crossfade it fades away with the park; other locations are untouched.
-    if((worldIndex===0 || (previousWorld===0 && worldFade<WORLD_FADE)) && state.mode!=='start'){
-      ctx.save();
-      if(worldIndex!==0)ctx.globalAlpha=1-worldFade/WORLD_FADE;
-      else if(previousWorld!==0&&worldFade<WORLD_FADE)ctx.globalAlpha=worldFade/WORLD_FADE;
-      drawParkMotion();ctx.restore();
-    }
+    // Scenery and props are sorted around Katya's contact line.
+    if (worldIndex===0) drawParkMotion();
     drawLocationLabel();
-    for(const o of state.objects){
-      if(o.handled||o.z<0||o.z>1.08)continue;
-      const z=o.z,proj=projectDepth(z),y=proj.y,x=roadX(o.lane,z),size=(11+CONFIG.contactZ*38)*proj.scale;
-      if(o.kind==='heart')heart(x,y,size);
-      else if(o.kind==='obstacle')barrier(x,y,size);
-      else {ctx.save();ctx.font=`${size}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='#ffdc62';ctx.shadowBlur=15;ctx.fillText('💍',x,y);ctx.restore();}
+
+    const contact = projectDepth(CONFIG.contactZ);
+    const x = roadBoundary(state.visualLane+.5, contact);
+    const time = state.runClock;
+    function drawObject(o) {
+      if (o.handled || o.z<0 || o.z>1.08) return;
+      const proj = projectDepth(o.z);
+      const px = roadBoundary(o.lane+.5,proj);
+      const size = (11+CONFIG.contactZ*38)*proj.scale;
+      const phase = reducedMotion.matches ? 0 : time*5 + o.id;
+      if (o.kind==='heart') art.heart(px,proj.y,size,phase);
+      else if (o.kind==='obstacle') art.obstacle(px,proj.y,size,o.id%3);
+      else art.ring(px,proj.y,size,phase,.6+.4*Math.min(1,o.z/.16));
     }
-    const contact=projectDepth(CONFIG.contactZ),px=roadX(state.visualLane,CONFIG.contactZ),py=contact.y;
-    ctx.save();ctx.translate(px,py);ctx.scale(contact.scale,contact.scale);const stride=Math.sin(state.runClock*17)*4;
-    if(state.effects.some(e=>e.kind==='heart')){ctx.fillStyle='rgba(255,100,193,.17)';ctx.beginPath();ctx.arc(0,0,36,0,Math.PI*2);ctx.fill();}
-    ctx.globalAlpha=state.invulnerable>0?.78:1;
-    ctx.strokeStyle='#ffc4dd';ctx.lineWidth=7;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(-7,21);ctx.lineTo(-9+stride,33);ctx.moveTo(7,21);ctx.lineTo(9-stride,33);ctx.stroke();
-    ctx.fillStyle='#ffc4dd';ctx.beginPath();ctx.arc(0,-19,13,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#ff6eae';ctx.beginPath();ctx.roundRect(-16,-8,32,32,10);ctx.fill();
-    ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText('К',0,14);ctx.restore();
-    for(const e of state.effects){
-      const t=e.age/CONFIG.effectDuration,ex=roadX(e.lane,CONFIG.contactZ),ey=py;
-      ctx.save();ctx.translate(ex,ey);ctx.scale(contact.scale,contact.scale);ctx.globalAlpha=1-t;
-      if(e.kind==='heart'){
-        ctx.font=`bold ${20+t*16}px system-ui`;ctx.fillStyle='#fff1fa';ctx.textAlign='center';ctx.shadowColor='#ff3ca5';ctx.shadowBlur=12;ctx.fillText('+1',22,-35-t*32);
-        for(let i=0;i<6;i++){const angle=i*Math.PI/3;ctx.fillStyle=i%2?'#fff':'#ff69bc';ctx.beginPath();ctx.arc(Math.cos(angle)*(10+t*32),-12+Math.sin(angle)*(10+t*32),3*(1-t)+.5,0,Math.PI*2);ctx.fill();}
-      }else{ctx.strokeStyle='#ff8b8b';ctx.lineWidth=5*(1-t);ctx.beginPath();ctx.arc(0,0,20+t*25,0,Math.PI*2);ctx.stroke();}
+    const visible = state.objects.filter(o=>!o.handled && o.z>=0 && o.z<=1.08).sort((a,b)=>a.z-b.z);
+    for (const o of visible) if (o.z<CONFIG.contactZ-.08) drawObject(o);
+
+    const reaction = state.hitFlash>0 ? 'hit' : state.effects.some(e=>e.kind==='heart') ? 'heart' : '';
+    const stride = state.mode==='start' || state.mode==='won' ? 0 : state.travel*31;
+    art.katya(x,contact.y+7*contact.scale,contact.scale,stride,state.lane-state.visualLane,reaction,state.mode==='won');
+
+    for (const o of visible) if (o.z>=CONFIG.contactZ-.08) drawObject(o);
+    for (const e of state.effects) {
+      const t=e.age/CONFIG.effectDuration, ex=roadBoundary(e.lane+.5,contact), ey=contact.y;
+      ctx.save();
+      ctx.translate(ex,ey);
+      ctx.scale(contact.scale,contact.scale);
+      ctx.globalAlpha=1-t;
+      if (e.kind==='heart') {
+        ctx.font='bold 17px system-ui';
+        ctx.fillStyle='#81425a';
+        ctx.textAlign='center';
+        ctx.fillText('+1',18,-23-t*20);
+        if (!reducedMotion.matches) {
+          for (let i=0;i<5;i++) {
+            const angle=i*Math.PI*2/5;
+            art.ellipse(Math.cos(angle)*(10+t*20),-7+Math.sin(angle)*(8+t*12),2.6-t,2.6-t,i%2?'#fff4d1':'#ca7181');
+          }
+        }
+      } else {
+        ctx.beginPath();
+        ctx.ellipse(0,0,18+t*13,7+t*5,0,0,Math.PI*2);
+        ctx.strokeStyle='#a95158';
+        ctx.lineWidth=2*(1-t);
+        ctx.stroke();
+      }
       ctx.restore();
+    }
+    if (state.mode==='won') {
+      art.ring(x,contact.y-53*contact.scale,30*contact.scale,0,.9);
     }
     if(DEBUG_MOTION){
       const item=parkLandmarks.find(o=>state.travel-o.distance>=0);
@@ -311,9 +419,18 @@
       ctx.fillText(`heart z: ${heartObject?.z.toFixed(2)??'-'} / park z: ${item?(state.travel-item.distance).toFixed(2):'-'}`,14,height-36);
       ctx.fillText(`park objects: ${parkLandmarks.length}`,14,height-17);ctx.restore();
     }
-    if(state.hitFlash>0){ctx.fillStyle=`rgba(255,95,108,${state.hitFlash*.24})`;ctx.fillRect(0,0,width,height);}
   }
-  function frame(time){frameId=requestAnimationFrame(frame);if(lastTime===null){lastTime=time;render();return;}const dt=Math.min(CONFIG.maxDelta,Math.max(0,(time-lastTime)/1000));lastTime=time;if(state.mode==='playing')update(dt);render();}
+  let drawnMode;
+  function frame(time) {
+    frameId=requestAnimationFrame(frame);
+    const dt=lastTime===null ? 0 : Math.min(CONFIG.maxDelta,Math.max(0,(time-lastTime)/1000));
+    lastTime=time;
+    if (state.mode==='playing' && dt>0) update(dt);
+    if (state.mode==='playing' || drawnMode!==state.mode) {
+      render();
+      drawnMode=state.mode;
+    }
+  }
   action.addEventListener('click',actionClick);document.querySelector('#left').addEventListener('click',()=>move(-1));document.querySelector('#right').addEventListener('click',()=>move(1));pauseButton.addEventListener('click',()=>{if(state.mode==='playing')setMode('paused');else if(state.mode==='paused')resume();});document.querySelector('#restart').addEventListener('click',restart);
   window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' ','Escape'].includes(e.key))e.preventDefault();if(e.repeat)return;if(e.key==='ArrowLeft')move(-1);if(e.key==='ArrowRight')move(1);if(e.key==='Escape'||e.key===' '){if(state.mode==='playing')setMode('paused');else if(state.mode==='paused')resume();}});
   stage.addEventListener('pointerdown',e=>{if(e.target!==canvas)return;swipeStart={x:e.clientX,y:e.clientY,id:e.pointerId};});stage.addEventListener('pointerup',e=>{if(!swipeStart||e.pointerId!==swipeStart.id)return;const dx=e.clientX-swipeStart.x,dy=e.clientY-swipeStart.y;swipeStart=null;if(Math.abs(dx)>28&&Math.abs(dx)>Math.abs(dy)*1.2)move(dx>0?1:-1);});stage.addEventListener('pointercancel',()=>swipeStart=null);
