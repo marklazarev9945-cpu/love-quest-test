@@ -65,16 +65,16 @@ function createDashArt(ctx) {
     ctx.restore();
   }
 
-  function katya(x, y, scale, stride, changingLane, reaction, won) {
+  function katya(x, y, scale, stride, changingLane, reaction, won, recoil) {
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(scale, scale);
     ellipse(0, 1, 14, 3.7, '#5c53422d');
     const step = Math.sin(stride);
     ctx.translate(0, -1 - Math.abs(step) * 1.8 - (reaction === 'heart' ? 1 : 0));
-    ctx.rotate(changingLane * .08);
+    ctx.rotate(changingLane * .08 - recoil * .05);
     ctx.translate(-20, -76);
-    if (reaction === 'hit') ctx.globalAlpha = .84;
+    if (reaction === 'hit') ctx.globalAlpha = .81 + .16 * (1-recoil);
     shapes([hair]);
     limb('leg-left', 14, 55, step * .35, Math.max(0, -step) * 5);
     limb('leg-right', 25, 55, -step * .35, Math.max(0, step) * 5);
@@ -232,33 +232,98 @@ function createDashArt(ctx) {
     ctx.restore();
   }
 
+  const branches = [
+    {
+      trunk: [[-24,5],[-12,1],[1,3],[15,-3],[24,-6]],
+      forks: [[[-10,1],[-14,-10],[-20,-15]],[[5,1],[14,8],[21,11]]]
+    },
+    {
+      trunk: [[-24,7],[-13,4],[-4,-3],[10,-3],[22,-10]],
+      forks: [[[-4,-3],[-8,-11],[-5,-16]],[[10,-3],[17,5],[23,6]]]
+    },
+    {
+      trunk: [[-24,-4],[-13,-1],[1,7],[13,5],[23,0]],
+      forks: [[[-13,-1],[-9,-10],[0,-14]],[[3,7],[9,-1],[11,-12]],[[12,5],[18,10]]]
+    }
+  ];
+
   function obstacle(x,y,size,variant) {
     ctx.save();
     ctx.translate(x,y);
     ctx.scale(size/44,size/44);
-    ellipse(2,12,26,5,'#604e3d40');
-    if(variant===0) {
-      rect(-24,-14,48,23,5,'#87634e');
-      rect(-22,-13,44,18,3,'#b47c57');
-      line([[-17,-10],[16,-10]],'#ddb384',2);
-      for(const x of [-17,0,17]) {
-        line([[x,5],[x,13]],'#725744',3.5);
-        ellipse(x,-2,2,2,'#f0d49c');
+    ellipse(2,11,25,4.8,'#604e3d40');
+    const {trunk,forks} = branches[variant];
+    for (const fork of forks) {
+      line(fork,'#634a37',4.5);
+      const [tipX,tipY] = fork[fork.length-1];
+      ellipse(tipX,tipY,1.65,1.65,'#c59b70');
+    }
+    line(trunk,'#624735',9);
+    line(trunk.map(([px,py])=>[px,py-1.3]),'#946c4b',4);
+    const [tipX,tipY] = trunk[trunk.length-1];
+    ellipse(tipX,tipY,2.5,3.2,'#d1a779');
+    ctx.restore();
+  }
+
+  // Conservative lower outline including the stroke and the maximum pulse.
+  function heartBottom(size) { return 14 * (size/30) * 1.045; }
+  const katyaClearance = 76;
+
+  function pickupGlow(x,y,scale,strength) {
+    ellipse(x,y+6*scale,25*scale,8*scale,`rgba(251,225,169,${.38*strength})`);
+  }
+
+  function contactEffect(x,y,scale,t,heart,reduced) {
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.scale(scale,scale);
+    ctx.globalAlpha = 1-t;
+    const spread = 1-(1-t)**2;
+    if (heart) {
+      ctx.font='bold 15px system-ui';
+      ctx.fillStyle='#81425a';
+      ctx.textAlign='center';
+      ctx.fillText('+1',18,-10-(reduced?0:spread*8));
+      if (!reduced) {
+        for (let i=0;i<6;i++) {
+          const angle = Math.PI*(.14+i*.144);
+          ctx.save();
+          ctx.translate(Math.cos(angle)*(4+22*spread),-Math.sin(angle)*(3+18*spread)-3);
+          ctx.rotate((i-2.5)*.22);
+          const size=.12-.04*t;
+          ctx.scale(size,size);
+          path(heartShape,i%2?'#bd6077':'#e5a497');
+          ctx.restore();
+        }
       }
-    } else if(variant===1) {
-      line([[-24,6],[-13,0],[3,2],[22,-8]],'#6d5141',10);
-      line([[-23,4],[-12,-2],[3,0],[22,-10]],'#a47b56',5);
-      line([[-9,0],[-13,-10],[-18,-14]],'#795d44',4.5);
-      line([[6,0],[15,8],[22,11]],'#86664a',4.5);
-      ellipse(22,-9,3.5,4,'#deb58b');
     } else {
-      rect(-23,-13,46,25,8,'#805849');
-      rect(-21,-12,42,22,7,'#a67764');
-      line([[-8,-12],[-6,-17],[6,-17],[8,-12]],'#7c594a',3);
-      line([[-19,-4],[19,-4]],'#d7ad83',2.5);
-      rect(-4,-5,8,8,2,'#edd298');
+      ellipse(0,0,18+spread*7,6+spread*3,'#a9515839');
+      if (!reduced) {
+        for (let i=0;i<5;i++) {
+          const angle=Math.PI*2*i/5;
+          ellipse(Math.cos(angle)*(12+spread*15),Math.sin(angle)*(4+spread*8),2.3-t,1.5-t*.55,i%2?'#bc7f63':'#995b4c');
+        }
+      }
     }
     ctx.restore();
+  }
+
+  function skyline(width,horizon) {
+    const towers = [
+      [.839,.44,.044,'#acb2a1'], [.889,.52,.046,'#a6ae9e'], [.944,.39,.039,'#b2b2a1']
+    ];
+    const foot=horizon*1.02;
+    towers.forEach(([left,height,span,fill],index)=>{
+      const x=left*width,w=span*width,h=horizon*height,y=foot-h;
+      rect(x,y,w,h,1,fill);
+      rect(x+w*.08,y-h*.035,w*.82,h*.07,1,fill);
+      const columns=index===2?2:3;
+      for (let row=0;row<5;row++) {
+        for (let col=0;col<columns;col++) {
+          rect(x+w*(.13+.26*col),y+h*(.11+.157*row),w*.13,h*.065,.5,'#e3e2ce85');
+        }
+      }
+    });
   }
 
   function ring(x,y,size,phase,visibility=1) {
@@ -281,5 +346,5 @@ function createDashArt(ctx) {
     ctx.restore();
   }
 
-  return {katya, scenery, heart, obstacle, ring, ellipse, line, shape, rect};
+  return {katya, katyaClearance, scenery, heart, heartBottom, obstacle, ring, pickupGlow, contactEffect, skyline, ellipse, line, shape, rect};
 }
